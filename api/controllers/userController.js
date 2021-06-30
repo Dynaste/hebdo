@@ -1,73 +1,83 @@
 require('dotenv').config();
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const validator = ('validator');
+// const validator = ('validator');
 const JWT_TOKEN = process.env.JWT_TOKEN;
-const {port, baseUrl: hostname} = require('./../config');
+const { port, baseUrl: hostname } = require('./../config');
+const {
+    get_request_path,
+    json_response,
+    check_update,
+    check_get_one,
+    check_create_element
+} = require('../utils/utils');
 
 exports.get_all_users = (req, res) => {
     let statusCode = 200;
-    
+
     try {
         User.find({}, (err, users) => {
             if (err) {
                 statusCode = 500;
                 throw 'Server internal error.';
             } else {
-                res.status(statusCode).json({
-                    statusCode,
-                    method: 'POST',
-                    message: "You received the users list",
-                    data: {
-                        ...users,
-                        _options: {
-                            create: {
-                                method: 'POST',
-                                link: `http://${hostname}:${port}/users/create`,
-                                properties: {
-                                    email: 'String',
-                                    password: 'String',
-                                    role: 'String'
-                                }
-                            }
-                        }
-                    }
+                const usersList = [];
+
+                users.forEach((user) => {
+                    const newObjUser = {
+                        _id: user._id,
+                        email: user.email,
+                        password: user.password,
+                        link: `http://${hostname}:${port}/users/${user._id}`,
+                    };
+                    usersList.push({ ...newObjUser });
                 });
+
+                const obj = {
+                    ...usersList,
+                    _options: {
+                        create: {
+                            method: 'POST',
+                            link: `http://${hostname}:${port}/users/create`,
+                            properties: {
+                                email: 'String',
+                                password: 'String',
+                                role: 'String',
+                            },
+                        },
+                    },
+                };
+                json_response(
+                    req,
+                    res,
+                    statusCode,
+                    'GET',
+                    {type: 'getMany', objName: 'user', value: usersList.length},
+                    obj
+                );
             }
         });
     } catch (err) {
         console.log(err);
-        res.status(statusCode)
-        .json({
-            statusCode,
-            method: 'POST',
-            message: err
-        });
+        json_response(req, res, statusCode, 'GET', err, null, true);
     }
-}
+};
 
 exports.get_one_user = (req, res) => {
     let statusCode = 200;
-    const {userId} = req.params.userId;
     let error;
 
     try {
-        User.findOne({_id: userId}, (err, user) => {
-            if (err) {
-                statusCode = 500;
-                throw "Server internal error";
-
-            } else if (user) {
-                
-                console.log("User exist")
-                console.log({user});
-                res.status(statusCode)
-                .json({
-                    statusCode,
-                    method: 'GET',
-                    message: "User found",
-                    data: {
-                        ...user,
+        check_get_one(req, 'userId', () => {
+            User.findOne({ _id: req.params.userId }, (err, user) => {
+                if (err) {
+                    statusCode = 500;
+                    throw 'Server internal error.';
+                } else if (user) {
+                    console.log('User exist');
+                    console.log({ user });
+                    const data = {
+                        user,
                         _options: {
                             create: {
                                 method: 'POST',
@@ -75,8 +85,8 @@ exports.get_one_user = (req, res) => {
                                 properties: {
                                     email: 'String',
                                     password: 'String',
-                                    role: 'String'
-                                }
+                                    role: 'String',
+                                },
                             },
                             update: {
                                 method: 'PUT',
@@ -84,41 +94,115 @@ exports.get_one_user = (req, res) => {
                                 properties: {
                                     email: 'String',
                                     password: 'String',
-                                    role: 'String'
-                                }
+                                    role: 'String',
+                                },
                             },
                             delete: {
                                 method: 'DELETE',
-                                link: `http://${hostname}:${port}/users/${user._id}/delete`
+                                link: `http://${hostname}:${port}/users/${user._id}/delete`,
                             },
-                        }
-                    },
-                    
-                })
-            } else {
-                statusCode = 404;
-                error = new Error("User not found")
-                throw error;
-            }
-        })
+                        },
+                    };
+                    json_response(
+                        req,
+                        res,
+                        statusCode,
+                        'GET',
+                        {type: 'getOne', objName: 'User'},
+                        data
+                    );
+                } else {
+                    statusCode = 404;
+                    error = new Error('User not found');
+                    throw error;
+                }
+            });
+        });
     } catch (err) {
-        console.log({err});
-        console.log("User not exist")
-        res.json({
-            statusCode,
-            method: 'GET',
-            message: err
-        })
+        console.log('User not exist');
+        json_response(req, res, statusCode, 'GET', err, null, true);
     }
-}
+};
 
 exports.update_one_user = (req, res) => {
+    let statusCode = 200;
+    let error;
 
-}
+    try {
+        check_update(req, 'userId', () => {
+            User.findOne({ _id: req.params.userId }, async (err, user) => {
+                if (err) {
+                    statusCode = 500;
+                    throw 'Server internal error.';
+                } else if (user) {
+                    console.log({ user });
+                    const updatedUser = {
+                        _id: user._id,
+                        email: req.body?.email ?? user.email,
+                        password: req.body?.password ?? user.password,
+                        role: req.body?.role ?? user.role,
+                    };
+                    console.log({ updatedUser });
+                    await User.replaceOne(
+                        { _id: req.params.userId },
+                        { ...updatedUser }
+                    );
 
-exports.delete_one_user = (req, res) => {
+                    const data = {
+                        beforeUpdate: {
+                            user,
+                        },
+                        afterUpdate: {
+                            updatedUser,
+                        },
+                        _options: {
+                            create: {
+                                method: 'POST',
+                                link: `http://${hostname}:${port}/users/create`,
+                                properties: {
+                                    email: 'String',
+                                    password: 'String',
+                                    role: 'String',
+                                },
+                            },
+                            update: {
+                                method: 'PUT',
+                                link: `http://${hostname}:${port}/users/${user._id}/update`,
+                                properties: {
+                                    email: 'String',
+                                    password: 'String',
+                                    role: 'String',
+                                },
+                            },
+                            delete: {
+                                method: 'DELETE',
+                                link: `http://${hostname}:${port}/users/${user._id}/delete`,
+                            },
+                        },
+                    };
 
-}
+                    json_response(
+                        req,
+                        res,
+                        statusCode,
+                        'PUT',
+                        {type: 'update'},
+                        data
+                    );
+                } else {
+                    statusCode = 404;
+                    error = new Error('User not found');
+                    throw error;
+                }
+            });
+        });
+    } catch (err) {
+        console.log('Update failed, user not founds or empty body');
+        json_response(req, res, statusCode, 'PUT', err, null, true);
+    }
+};
+
+exports.delete_one_user = (req, res) => {};
 
 exports.login = (req, res) => {
     let statusCode = 202;
@@ -127,94 +211,96 @@ exports.login = (req, res) => {
         const { email, password } = req.body;
 
         if (email && password) {
-            User.findOne({email}, (err, user) => {
+            User.findOne({ email }, (err, user) => {
                 if (err) {
-                    statusCode = 401
-                    throw "Invalid Email and/or password"
+                    statusCode = 401;
+                    throw 'Invalid Email and/or password';
                 } else if (user) {
-                    if (req.body.password, user.password) {
-                        jwt.sign({email: user.email, role: user.role}, JWT_TOKEN, {expiresIn: "24 hour"}, (err, token) => {
-                            if (err) {
-                                console.log({err})
-                                statusCode = 500;
-                                throw "Server internal error";
-                            } else if (token) {
-                                console.log("Successfully logged")
-                                res.status(statusCode)
-                                .json({
-                                    statusCode,
-                                    method: 'POST',
-                                    message: "Successfully logged-in",
-                                    data: token
-                                })
-                            } else {
-                                throw "An error has occured"
+                    if ((req.body.password, user.password)) {
+                        jwt.sign(
+                            { email: user.email, role: user.role },
+                            JWT_TOKEN,
+                            { expiresIn: '24 hour' },
+                            (err, token) => {
+                                if (err) {
+                                    console.log({ err });
+                                    statusCode = 500;
+                                    throw 'Server internal error';
+                                } else if (token) {
+                                    console.log('Successfully logged');
+                                    res.status(statusCode).json({
+                                        statusCode,
+                                        method: 'POST',
+                                        message: 'Successfully logged-in',
+                                        data: { token },
+                                    });
+                                } else {
+                                    throw 'An error has occured';
+                                }
                             }
-                        });
+                        );
                     } else {
-                        throw "The couple Email/Password is not working"
+                        throw 'The couple Email/Password is not working';
                     }
                 } else {
                     statusCode = 404;
-                    throw "Email not exist"
+                    throw 'Email not exist';
                 }
             });
         } else {
             statusCode = 500;
-            throw "All fields are required"
+            throw 'All fields are required';
         }
-       
     } catch (err) {
-        res.status(statusCode)
-        .json({
+        res.status(statusCode).json({
             statusCode,
             method: 'POST',
-            message: err
-        })
+            message: err,
+        });
     }
-}
+};
 
 exports.signup = async (req, res) => {
     let statusCode = 201;
     const { role, email, password } = req.body;
-    
     try {
-        if ( role && email && password) {
-            if (!validator.isEmail(email)) {
-                statusCode = 400;
-                throw "Email don't have the right format.";
-            } else if (password === "" || password === null) {
-                throw "You have to set a password"
+        check_create_element(req, () => {
+            // if (!validator.isEmail(email)) {
+            //     statusCode = 400;
+            //     throw "Email don't have the right format.";
+            // }
+            if (password === '' || password === null) {
+                throw 'You have to set a password';
             } else {
-                User.findOne({email}, async (err, user) => {
+                User.findOne({ email }, async (err, user) => {
                     if (err) {
                         throw err;
                     } else {
                         const newUser = await new User({
                             role: role,
                             email: email.toLowerCase(),
-                            password: password, 
+                            password: password,
                         });
-                        
-                        newUser.save((error, data) => {
+
+                        await newUser.save((error, data) => {
+                            console.log(req.body);
                             if (error) {
+                                console.log('[Error: 500]');
                                 statusCode = 500;
-                                res.status(statusCode)
-                                .json({
+                                res.status(statusCode).json({
                                     statusCode,
                                     method: 'POST',
-                                    message: "Server internal error",
-                                    data: null
-                                })
+                                    message: 'Server internal error',
+                                    data: null,
+                                });
                             } else {
-                                console.log("User has been saved")
-                                const createdUser = {...data._doc};
+                                console.log('User has been saved');
+                                const createdUser = { ...data._doc };
                                 delete createdUser.password;
-                                res.status(statusCode)
-                                .json({
+                                res.status(statusCode).json({
                                     statusCode,
                                     method: 'POST',
-                                    message: "User successfully created",
+                                    message: 'User successfully created',
                                     data: {
                                         ...createdUser,
                                         _options: {
@@ -223,30 +309,26 @@ exports.signup = async (req, res) => {
                                                 link: `http://${hostname}:${port}/login`,
                                                 properties: {
                                                     email: 'String',
-                                                    password: 'String'
-                                                }
+                                                    password: 'String',
+                                                },
                                             },
-                                        }
-                                    }
-                                })
+                                        },
+                                    },
+                                });
                             }
-                        })
+                        });
                     }
-                })
-            }            
-        } else {
-            throw "All fields are required"
-        }
-
+                });
+            }
+        })
     } catch (err) {
         statusCode = 500;
-        console.log("[Error]")
-        res.status(statusCode)
-        .json({
+        console.log('[Error]');
+        res.status(statusCode).json({
             statusCode,
             method: 'POST',
             message: err,
-            user: null
-        })
+            data: null,
+        });
     }
-}
+};

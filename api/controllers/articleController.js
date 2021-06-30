@@ -1,14 +1,48 @@
-const Article = require('../models/article');
+const Article = require('../models/articles');
 const {port, baseUrl: hostname} = require('./../config');
 
 exports.get_all_articles = (req, res) => {
-    let statusCode = 202;
-    const articles = Article.find({});
-    return res.send.json({
-        statusCode,
-        requestMethod: 'GET',
-        articles
-    })
+    let statusCode = 200;
+    //const articles = Article.find({});
+    try {
+        Article.find({}, (err, articles) => {
+            if(err){
+                statusCode = 500;
+                throw 'Server internal error. ';
+            }
+            else{
+                const articleList = [];
+                articles.forEach((article) => {
+                    const newObjArticle = {
+                        _id: article._id,
+                        title: article.title,
+                        author: article.author,
+                        link: `http://${hostname}:${port}/articles/${article._id}`,
+                    };
+                    articleList.push({ ...newObjArticle})
+                });
+
+                const obj = {
+                    ...articleList,
+                    _options: {
+                        create: {
+                            method: 'POST',
+                            link: `http://${baseUrl}/articles/${article._id}/create`
+                        },
+                    },
+                },
+            }
+        })
+        
+    } catch (error) {
+        return res.send.json({
+            statusCode,
+            requestMethod: 'GET',
+            articles,
+    
+        })
+        
+    }
 }
 
 exports.get_one_article = (req, res) => {
@@ -32,15 +66,15 @@ exports.get_one_article = (req, res) => {
             _options: {
                 create: {
                     method: 'POST',
-                    link: `http://${baseUrl}/article/${article._id}/create`
+                    link: `http://${baseUrl}/articles/${article._id}/create`
                 },
                 update: {
                     method: 'PUT',
-                    link: `http://${baseUrl}/article/${article._id}/update`
+                    link: `http://${baseUrl}/articles/${article._id}/update`
                 },
                 delete: {
                     method: 'DELETE',
-                    link: `http://${baseUrl}/article/${article._id}/delete`
+                    link: `http://${baseUrl}/articles/${article._id}/delete`
                 },
             }
         })

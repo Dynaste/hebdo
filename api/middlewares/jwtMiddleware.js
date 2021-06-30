@@ -12,21 +12,23 @@ exports.verify_token = (req, res, next) => {
                 console.log('secret token', JWT_TOKEN);
 
                 if (err) {
+                    statusCode = 403;
                     throw "Forbidden access";
                 } else {
                     next();
                 }
             })
         } else {
-            throw 'Forbidden access';
+            statusCode = 500;
+            throw 'Server internal error';
        }
     } catch (err) {
-        statusCode = 403;
         res.status(statusCode)
             .json({
                 statusCode,
                 request_method: 'GET',
-                message: err
+                message: err,
+                data: null
             })
     }
 }

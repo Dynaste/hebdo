@@ -15,16 +15,4 @@ module.exports = (server) => {
 
     server.route('/animals/:animalId/delete')
         .put(animalController.delete_animal);
-
-    server.route('/animals/:animalType')
-        .get(animalController.get_all_animals_from_type);
-
-    server.route('/animals/:animalType/:animalId')
-        .get(animalController.get_one_animal_from_type);
-
-    server.route('/animals/:animalType/:animalRace')
-        .get(animalController.get_all_animals_from_type_by_race);
-
-    server.route('/animals/:animalType/:animalRace/:animalId')
-        .get(animalController.get_one_animal_from_type_by_race);
 }
