@@ -13,7 +13,7 @@ exports.get_all_animals = (req, res) => {
         Animal.find({}, (err, animals) => {
             if (err) {
                 statusCode = 500;
-                throw 'Server internal error';
+                throw {type: 'server_error'};
             } else if (animals) {
                 const animalsArr = [];
                 if (animals.length === 0) {
@@ -59,7 +59,7 @@ exports.get_one_animal = (req, res) => {
             Animal.findOne({id: animalId}, (err, animal) => {
                 if (err) {
                     statusCode = 500;
-                    throw {type: 'server'};
+                    throw {type: 'server_error'};
 
                 } else if (animal) {
 
@@ -97,7 +97,7 @@ exports.get_one_animal = (req, res) => {
 
 exports.create_animal = (req, res) => {
     const {type, race, name, weight, age} = req.body;
-    let statusCode = 200;
+    let statusCode = 201;
 
     try {
         check_create_element(req, () => {
@@ -105,15 +105,9 @@ exports.create_animal = (req, res) => {
                 Animal.findOne({race, name, type, age, weight}, async (err, animal) => {
                     if (err) {
                         statusCode = 500;
-                        throw 'Server internal error';
+                        throw {type: 'server_error'};
                     } else if (animal) {
-                        res.status(statusCode)
-                            .json({
-                                statusCode,
-                                method: 'POST',
-                                message: 'This Animal already exist.',
-                                data: null
-                            })
+                        json_response(req, res, statusCode, 'POST', {type: 'exist'}, null);
     
                     } else if (!animal) {
                         const newAnimal = await new Animal({
@@ -121,9 +115,11 @@ exports.create_animal = (req, res) => {
                         });
     
                         newAnimal.save((error) => {
-                            if(error) {
+                            if(!error) {
                                 statusCode = 500;
-                                json_response(req, res, statusCode, 'POST', `Animal Successfully created`, newAnimal);
+                                json_response(req, res, statusCode, 'POST', {type: 'success_create'}, newAnimal);
+                            } else {
+                                console.log('[Error] - Exception')
                             }
                         })
                     }
@@ -172,12 +168,14 @@ exports.delete_animal = (req, res) => {
                 Animal.findOneAndDelete({_id: animalId}, (err, animal) => {
                     if (err) {
                         statusCode = 500;
-                        throw 'Server internal error';
+                        throw {type: 'server_error'};
                     } else if (animal) {
-                        json_response(req, res, statusCode, 'DELETE', `Animal ${animal._id} has been successfully deleted.`, animal);
+                        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete'}, animal);
                     }
                 })
             })
+        } else {
+            throw {type: 'id_required'};
         }
     } catch (err) {
         json_response(req, res, statusCode, 'DELETE', err, null, true);
