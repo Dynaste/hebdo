@@ -3,18 +3,14 @@ const Article = require('../models/article');
 const { port, baseUrl: hostname } = require('./../config');
 
 const {
-    get_request_path,
     json_response,
-    check_update,
-    check_get_one,
-    check_create_element
 } = require('../utils/utils');
 
 exports.get_all_articles = (req, res) => {
     let statusCode = 200;
     Article.find({})
-        //.populate("user")
-        .exec((err,articles) => {
+        // .populate("user")
+        .exec((err, articles) => {
             if (err) {
                 statusCode = 500;
                 throw 'Server internal error.';
@@ -48,51 +44,64 @@ exports.get_all_articles = (req, res) => {
                     res,
                     statusCode,
                     'GET',
-                    {type: 'getMany', objName: 'article', value: articlesList.length},
+                    {
+                        type: 'getMany',
+                        objName: 'article',
+                        value: articlesList.length,
+                    },
                     obj
                 );
             }
         });
-    }
+};
 exports.get_one_article = (req, res) => {
     let statusCode = 202;
-    const articleId = req.params.id;
-    try {
-        const article = Article.findOne({ _id: articleId });
-        if (!article) {
-            statusCode = 400;
-            return res.send.json({
-                statusCode,
-                requestMethod: 'GET',
-                message: 'Article not found',
+    const id = req.params.articleId;
+    Article.findById(id, '-__v', (error, article) => {
+        if (error) {
+            statusCode = 500;
+            return res.status(statusCode).json({
+                message: 'Internal server error',
             });
         }
-        return res.status(statusCode).json({
-            statusCode,
-            method: 'GET',
+        if (!article) {
+            statusCode = 404;
+            return res
+                .status(statusCode)
+                .json({ message: 'Article not found' });
+        }
+        const data = {
             article,
             _options: {
                 create: {
                     method: 'POST',
-                    link: `http://${baseUrl}/articles/${article._id}/create`,
+                    link: `http://${hostname}:${port}/articles/create`,
+                    properties: {
+                        title: 'String',
+                        content: 'String',
+                        author: 'String',
+                    },
                 },
                 update: {
                     method: 'PUT',
-                    link: `http://${baseUrl}/articles/${article._id}/update`,
+                    link: `http://${hostname}:${port}/articles/${article._id}/update`,
+                    properties: {
+                        title: 'String',
+                        content: 'String',
+                        author: 'String',
+                    },
                 },
                 delete: {
                     method: 'DELETE',
-                    link: `http://${baseUrl}/articles/${article._id}/delete`,
+                    link: `http://${hostname}:${port}/articles/${article._id}/delete`,
                 },
             },
+        };
+        return res.json(data, req, res, statusCode, 'GET', {
+            type: 'getOne',
+            objName: 'Article',
         });
-    } catch (error) {
-        statusCode = 500;
-        console.log(error);
-        return res
-            .status(statusCode)
-            .send({ message: 'Internal server error' });
-    }
+    });
 };
 
 exports.create_an_article = (req, res) => {
@@ -105,53 +114,85 @@ exports.create_an_article = (req, res) => {
                 message: 'Server internal error',
             });
         } else {
-            return res.status(201).json({
+            return res.status(statusCode).json({
                 message: `Article created: ${article.title}`,
                 article: new_article,
-                author: 
-                statusCode,
+                author: statusCode,
                 requestMethod: 'POST',
             });
         }
     });
 };
 
-exports.update_an_article = (req, res) => {
-    let statusCode = 202;
+exports.update_an_article = async (req, res) => {
     const id = req.params.articleId;
-    const data = req.body;
-    try {
-        isExistArticle = Article.findById(id);
+    const updateArticle = req.body;
+    let statusCode = 202;
 
+    try {
+        const isExistArticle = await Article.findById(id);
         if (!isExistArticle) {
             statusCode = 404;
             return res
                 .status(statusCode)
                 .send({ message: 'Article not found' });
         }
-
-        const article = Article.findOneAndUpdate(
+        const article = await Article.findOneAndUpdate(
             { _id: id },
-            { $set: data },
+            { $set: updateArticle },
             { new: true }
         );
-
-        return res.send({
-            message: 'Article updated',
-            article,
+        const data = {
+            updateArticle,
+            _options: {
+                create: {
+                    method: 'POST',
+                    link: `http://${hostname}:${port}/articles/create`,
+                    properties: {
+                        title: 'String',
+                        content: 'String',
+                        author: 'String',
+                    },
+                },
+                update: {
+                    method: 'PUT',
+                    link: `http://${hostname}:${port}/articles/${article._id}/update`,
+                    properties: {
+                        title: 'String',
+                        content: 'String',
+                        author: 'String',
+                    },
+                },
+                delete: {
+                    method: 'DELETE',
+                    link: `http://${hostname}:${port}/articles/${article._id}/delete`,
+                },
+            },
+        };
+        return res.json(
+            data,
+            req,
+            res,
             statusCode,
-            requestMethod: 'PUT',
-        });
+            'PUT',
+            {
+                objName: 'Article',
+            },
+            { type: 'update' }
+        );
     } catch (error) {
-        (statusCode = 500),
-            res.status(statusCode).send({ message: 'Internal server error' });
+        statusCode = 500;
+        console.error(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;', error);
+        return res
+            .status(statusCode)
+            .send({ message: 'Internal server error' });
     }
 };
 
 exports.delete_an_article = (req, res) => {
     let statusCode = 202;
     const id = req.params.articleId;
-    Article.findById(id, (error, docs) => {
+    Article.findByIdAndDelete(id, (error, docs) => {
         if (error) {
             statusCode = 500;
             return res
@@ -164,13 +205,12 @@ exports.delete_an_article = (req, res) => {
                 .status(statusCode)
                 .json({ message: 'Article not found' });
         }
-        return res.send.json({
+
+        return res.json({
             docs,
             message: 'Article deleted',
             statusCode,
             requestMethod: 'DELETE',
-            link: `http://${baseUrl}/article/${article._id}/delete`,
-            //link: "http://${baseUrl}/article/${article._id}/delete"
         });
     });
 };
