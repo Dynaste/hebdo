@@ -241,6 +241,50 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update article",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "new article  2 updated",
+									"type": "text"
+								},
+								{
+									"key": "subtitle",
+									"value": "sous titre",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "blabla",
+									"type": "text"
+								},
+								{
+									"key": "author",
+									"value": "60dc2b31c556e4780d454042",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/articles/60dcd672175eef1a7aff7882",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								"60dcd672175eef1a7aff7882"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
