@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
-const User = require('../models/user');
-
 const articleSchema = new Schema({
     title: {
         type: String,
@@ -20,10 +18,10 @@ const articleSchema = new Schema({
        trim: true
     },
     author: {
-        type: User,
-        required: true,
-        trim: true
-    }
+        type: Schema.Types.ObjectId,
+        required: "UserId is required",
+        ref: "User",
+      },
 })
 
 articleSchema.plugin(uniqueValidator, { message: "Error, expected \"{PATH}\" ({VALUE}) to be unique "});

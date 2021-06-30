@@ -29,6 +29,7 @@ const animalRoutes = require('./api/routes/animalRoutes');
 animalRoutes(app);
 const userRoutes = require('./api/routes/userRoutes');
 userRoutes(app);
-
+const articleRoutes = require('./api/routes/articleRoutes');
+articleRoutes(app);
 
 app.listen(port, hostname);
