@@ -34,32 +34,54 @@ exports.json_response = (req, res, statusCode, method, objMessage = {type, objNa
  */
 exports.get_response_message = (type, objName, value) => {
     switch(type) {
-        case 'update':
-            return `Update done`;
-        case 'update_no_body':
-            return `You must at least update one property`;
-        case 'delete':
-            return ``;
-        case 'create':
-            return ``;
+        // LOGIN
+        case 'success_login':
+            return `Successfully logged-in`;
+        case 'email_pwd_couple_error':
+            return `Invalid couple Email/Password`;
+
+        // GET
         case 'getOne':
             return `${objName} found`;
         case 'getMany':
             return `${value} ${objName}s found`;
-        case 'forbidden':
-            return ``;
-        case 'login':
-            return ``;
-        case 'signup':
-            return ``;
+
+        // UPDATE
+        case 'update':
+            return `Update done`;
+        case 'update_no_body':
+            return `You must at least update one property`;
+
+        // DELETE
+        case 'success_delete':
+            return `${objName} ${value} has been successfully deleted.`;
+
+        // CREATE
+        case 'fields_required':
+            return `All fields are required`;
+        case 'success_create':
+            return `${objName} successfully created`;
+
+        // ERROR
+        case 'id_required':
+            return `Id is required`;
+        case 'no_data':
+            return `No data found`;
         case 'wrong_id_format':
             return `You entered wrong ID format`;
-        case 'server':
+        case 'server_error':
             return `Server internal error`;
-        case 'empty':
-            return `No data found`;
-        case '':
-            return ``;
+        case 'error_occured':
+            return `An error has occured`;
+        case 'not_found':
+            return `${objName} not found`;
+        case 'exist':
+            return `This ${objName} already exist`;
+        case 'not_exist':
+            return `This ${objName} not exist`;
+        
+
+            
         default:
             return `[Error] - ${type} isn't an available value.`;
     }

@@ -19,7 +19,7 @@ exports.get_all_users = (req, res) => {
         User.find({}, (err, users) => {
             if (err) {
                 statusCode = 500;
-                throw 'Server internal error.';
+                throw {type: 'server_error'};
             } else {
                 const usersList = [];
 
@@ -72,7 +72,7 @@ exports.get_one_user = (req, res) => {
             User.findOne({ _id: req.params.userId }, (err, user) => {
                 if (err) {
                     statusCode = 500;
-                    throw 'Server internal error.';
+                    throw {type: 'server_error'};
                 } else if (user) {
                     console.log('User exist');
                     console.log({ user });
@@ -133,7 +133,7 @@ exports.update_one_user = (req, res) => {
             User.findOne({ _id: req.params.userId }, async (err, user) => {
                 if (err) {
                     statusCode = 500;
-                    throw 'Server internal error.';
+                    throw {type: 'server_error'};
                 } else if (user) {
                     console.log({ user });
                     const updatedUser = {
@@ -191,8 +191,7 @@ exports.update_one_user = (req, res) => {
                     );
                 } else {
                     statusCode = 404;
-                    error = new Error('User not found');
-                    throw error;
+                    throw {type: 'not_found', objName: 'User'};
                 }
             });
         });
@@ -214,7 +213,7 @@ exports.login = (req, res) => {
             User.findOne({ email }, (err, user) => {
                 if (err) {
                     statusCode = 401;
-                    throw 'Invalid Email and/or password';
+                    throw {type: 'email_pwd_couple_error'};
                 } else if (user) {
                     if ((req.body.password, user.password)) {
                         jwt.sign(
@@ -225,38 +224,29 @@ exports.login = (req, res) => {
                                 if (err) {
                                     console.log({ err });
                                     statusCode = 500;
-                                    throw 'Server internal error';
+                                    throw {type: 'server_error'};
                                 } else if (token) {
                                     console.log('Successfully logged');
-                                    res.status(statusCode).json({
-                                        statusCode,
-                                        method: 'POST',
-                                        message: 'Successfully logged-in',
-                                        data: { token },
-                                    });
+                                    json_response(req, res, statusCode, 'POST', {type: success_login}, {token});
                                 } else {
-                                    throw 'An error has occured';
+                                    throw {type: 'error_occured'};
                                 }
                             }
                         );
                     } else {
-                        throw 'The couple Email/Password is not working';
+                        throw {type: 'email_pwd_couple_error'};
                     }
                 } else {
                     statusCode = 404;
-                    throw 'Email not exist';
+                    throw {type: 'email_not_exist'};
                 }
             });
         } else {
             statusCode = 500;
-            throw 'All fields are required';
+            throw {type: 'fields_required'};
         }
     } catch (err) {
-        res.status(statusCode).json({
-            statusCode,
-            method: 'POST',
-            message: err,
-        });
+        json_response(req, res, statusCode, 'POST', err, null, true);
     }
 };
 
@@ -287,12 +277,7 @@ exports.signup = async (req, res) => {
                             if (error) {
                                 console.log('[Error: 500]');
                                 statusCode = 500;
-                                res.status(statusCode).json({
-                                    statusCode,
-                                    method: 'POST',
-                                    message: 'Server internal error',
-                                    data: null,
-                                });
+                                json_response(req, res, statusCode, 'POST', {type: 'server_error'}, null);
                             } else {
                                 console.log('User has been saved');
                                 const createdUser = { ...data._doc };
@@ -324,11 +309,6 @@ exports.signup = async (req, res) => {
     } catch (err) {
         statusCode = 500;
         console.log('[Error]');
-        res.status(statusCode).json({
-            statusCode,
-            method: 'POST',
-            message: err,
-            data: null,
-        });
+        json_response(req, res, statusCode, 'POST', err, null, true);
     }
 };
