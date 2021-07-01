@@ -8,7 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import { MenuItem } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { isAdmin, post, put } from '../functions/useApi';
+import { isAdmin, post, put, del } from '../functions/useApi';
 
 const useStyles = makeStyles(() => ({
     articleContainer: {
@@ -52,16 +52,18 @@ const Animals = ({ animals, setReload, reload }) => {
 
     const handleClickOpen = (type) => {
         setDialogContent(type);
-        if(type==='PUT'){
-            const typeValue = typeChoice.find(item => item.label === selectedAnimal.type);
-            console.log(typeValue.value)
+        if (type === 'PUT') {
+            const typeValue = typeChoice.find(
+                (item) => item.label === selectedAnimal.type
+            );
+            console.log(typeValue.value);
             setNewAnimal({
                 name: selectedAnimal.name,
                 weight: selectedAnimal.weight,
                 age: selectedAnimal.age,
                 type: typeValue.value,
                 race: selectedAnimal.race,
-            })
+            });
         }
         setOpen(true);
     };
@@ -116,10 +118,27 @@ const Animals = ({ animals, setReload, reload }) => {
 
     const updateAnimal = async () => {
         console.log(newAnimal);
-        const res = await put(`animals/${selectedAnimal._id}/update`, newAnimal);
+        const res = await put(
+            `animals/${selectedAnimal._id}/update`,
+            newAnimal
+        );
         console.log(res);
 
         if (res.status === 201) {
+            handleClose();
+            setNewAnimal({
+                type: 1,
+            });
+            setReload(!reload);
+        } else {
+            alert(res.data.message);
+        }
+    };
+
+    const deleteAnimal = async () => {
+        const res = await del(`animals/${selectedAnimal._id}/delete`);
+
+        if (res.status === 204) {
             handleClose();
             setNewAnimal({
                 type: 1,
@@ -242,13 +261,22 @@ const Animals = ({ animals, setReload, reload }) => {
                                 Fermer
                             </Button>
                             {isAdmin() && (
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handleClickOpen('PUT')}
-                                >
-                                    Editer
-                                </Button>
+                                <>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => deleteAnimal()}
+                                    >
+                                        Supprimer
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleClickOpen('PUT')}
+                                    >
+                                        Editer
+                                    </Button>
+                                </>
                             )}
                         </DialogActions>
                     </>

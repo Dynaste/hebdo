@@ -40,9 +40,6 @@ const useStyles = makeStyles((theme) => ({
         padding: 10,
         background: '#f5f5f5',
         width: '100%',
-        // display: 'flex',
-        // justifyContent: 'center',
-        // flexWrap: 'wrap',
         boxSizing: 'border-box',
     },
 }));

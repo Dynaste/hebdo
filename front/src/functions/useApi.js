@@ -78,6 +78,14 @@ export const put = async (path, body) => {
     return res;
 };
 
+export const del = async (path) => {
+    const res = await axios.delete(
+        `${process.env.REACT_APP_END_POINT}${path}`,
+        headers
+    );
+    return res;
+};
+
 export const getLink = async (path) => {
     const res = await axios.get(
         `${path}`,
