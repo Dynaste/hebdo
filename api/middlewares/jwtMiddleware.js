@@ -11,6 +11,7 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
         if (typeof token !== 'undefined') {
             jwt.verify(token, JWT_TOKEN, async (err, payload) => {
                 console.log({payload})
+                console.log({adminOnly})
                 console.log('secret token', JWT_TOKEN);
                 if (err) {
                     statusCode = 403;
@@ -21,7 +22,7 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
                     } else if (adminOnly && payload['role'] !== 'admin') {
                         statusCode = 403;
                         throw {type: 'admin_only'};
-                    } else if (!adminOnly && payload['role'] === 'user') {
+                    } else if (!adminOnly && (payload['role'] === 'user' || payload['role'] === 'admin')) {
                         next();
                     } else {
                         statusCode = 500;

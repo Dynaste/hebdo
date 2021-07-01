@@ -1,8 +1,6 @@
 require('dotenv').config();
 const Donation = require('../models/donation');
 const {port, baseUrl: hostname} = require('../config');
-const jwt = require('jsonwebtoken');
-const JWT_TOKEN = process.env.JWT_TOKEN;
 const {verify_token} = require('../middlewares/jwtMiddleware');
 const {
     json_response,
@@ -62,10 +60,10 @@ exports.create_donation = (req, res) => {
 
     try {
         check_create_element(req, Donation, async () => {
-            verify_token(req, res, true, async () => {
+            verify_token(req, res, false, async () => {
                 const newDonation = await new Donation({
                     userId,
-                    date,
+                    date: new Date(date),
                     amount
                 });
 
@@ -78,7 +76,7 @@ exports.create_donation = (req, res) => {
                                 type: 'String'
                             },
                             date: {
-                                type: 'String'
+                                type: 'Date'
                             },
                             amount: {
                                 type: 'Number'

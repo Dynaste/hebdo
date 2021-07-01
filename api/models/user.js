@@ -25,7 +25,7 @@ const userSchema = new Schema({
                 trim: true
             },
             adoptDate: {
-                type: String,
+                type: Date,
             }
         }],
         required: true
@@ -37,7 +37,7 @@ const userSchema = new Schema({
                 trim: true
             },
             purchaseDate: {
-                type: String,
+                type: Date,
             }
         }],
         required: true
