@@ -285,9 +285,11 @@ exports.signup = async (req, res) => {
                         throw err;
                     } else {
                         const newUser = await new User({
-                            role: role,
+                            role,
                             email: email.toLowerCase(),
-                            password: password,
+                            password,
+                            adoptedAnimals: [],
+                            boughtProducts: []
                         });
 
                         await newUser.save((error, data) => {
