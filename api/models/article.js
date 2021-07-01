@@ -25,5 +25,4 @@ const articleSchema = new Schema({
 })
 
 articleSchema.plugin(uniqueValidator, { message: "Error, expected \"{PATH}\" ({VALUE}) to be unique "});
-
 module.exports = mongoose.model("Article", articleSchema);
