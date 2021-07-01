@@ -79,6 +79,8 @@ exports.get_response_message = (type, objName, value) => {
             return `${objName} successfully created`;
         case 'error_create':
             return `${objName} hasn't been created`;
+        case 'password_required':
+            return `You have to set a password`;
 
         // ERROR
         case 'id_required':
@@ -99,6 +101,8 @@ exports.get_response_message = (type, objName, value) => {
             return `This ${objName} not exist`;
         case 'forbidden':
             return `Forbidden access`;
+        case 'admin_only':
+            return `Administrator only`;
         case 'unhandled_error':
             return `Unhandled Error at ${value}`;
         
