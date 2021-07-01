@@ -4,8 +4,20 @@ exports.get_request_path = (req) => {
     return `http://${hostname}:${port}${req.url}`;
 }
 
+/**
+ * Generic function to send data from Backend.
+ * @param {object} req Request object.
+ * @param {object} res Response object.
+ * @param {number} statusCode Status code (Ex: 200, 404, 500)
+ * @param {string} method API Method used
+ * @param {object} objMessage Message object to define which message to display
+ * @param {object} data Data sent 
+ * @param {boolean} showRequest Define if the request path has to be displayed
+ * @return {void}
+ */
 exports.json_response = (req, res, statusCode, method, objMessage = {type, objName: null, value: null}, data, showRequest = false) => {
 
+    // console.log({objMessage});
     const {type, objName, value} = objMessage;
     const obj = {
         statusCode,
@@ -14,6 +26,8 @@ exports.json_response = (req, res, statusCode, method, objMessage = {type, objNa
         data,
         request: this.get_request_path(req)
     }
+
+    // console.log({obj});
 
     !showRequest && delete obj.request;
 
@@ -41,9 +55,9 @@ exports.get_response_message = (type, objName, value) => {
             return `Invalid couple Email/Password`;
 
         // GET
-        case 'getOne':
+        case 'get_one':
             return `${objName} found`;
-        case 'getMany':
+        case 'get_many':
             return `${value} ${objName}s found`;
 
         // UPDATE
@@ -61,6 +75,8 @@ exports.get_response_message = (type, objName, value) => {
             return `All fields are required`;
         case 'success_create':
             return `${objName} successfully created`;
+        case 'error_create':
+            return `${objName} hasn't been created`;
 
         // ERROR
         case 'id_required':
@@ -79,6 +95,10 @@ exports.get_response_message = (type, objName, value) => {
             return `This ${objName} already exist`;
         case 'not_exist':
             return `This ${objName} not exist`;
+        case 'forbidden':
+            return `Forbidden access`;
+        case 'unhandled_error':
+            return `Unhandled Error at ${value}`;
         
 
             
@@ -127,11 +147,20 @@ exports.check_get_one = (req, identifierName = null, next) => {
  * @return {void} Nothing
  */
 exports.check_create_element = (req, next) => {
-    if (!Object.keys(req.body).map(prop => {
+
+    console.log(req.body)
+
+    const valueIsMissing = Object.keys(req.body).map(prop => {
         return (req.body[`${prop}`] === undefined || req.body[`${prop}`] === null || req.body[`${prop}`] === '');
-    }) === false) {
+    });
+
+    console.log({valueIsMissing});
+
+    if (!valueIsMissing) {
         next();
-    }  else {
-        throw 'All fields are required';
+    }  else if (valueIsMissing) {
+        throw {type: 'fields_required'};
+    } else {
+        throw {type: 'unhandled_error', value: 'CheckCreateElement'}
     }
 }
