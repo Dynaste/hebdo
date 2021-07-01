@@ -15,11 +15,10 @@ const Login = () => {
     const classes = useStyles();
 
     const log = async() => {
-        const body = JSON.stringify({
+        const body = {
             email: 'admin42@gmail.com',
             password: 'root'
-        })
-        console.log(body)
+        };
         const res = await logUser(body);
         console.log(res);
     }
