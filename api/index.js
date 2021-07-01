@@ -55,8 +55,10 @@ const userRoutes = require('./routes/userRoutes');
 userRoutes(app);
 const articleRoutes = require('./routes/articleRoutes');
 articleRoutes(app);
-const donationsRoutes = require('./routes/donationRoutes');
-donationsRoutes(app);
+const donationRoutes = require('./routes/donationRoutes');
+donationRoutes(app);
+const productRoutes = require('./routes/productRoutes');
+productRoutes(app);
 
 process.setMaxListeners(0);
 app.listen(port, hostname);

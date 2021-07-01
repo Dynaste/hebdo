@@ -1,0 +1,885 @@
+{
+	"info": {
+		"_postman_id": "16638a8a-b0e3-49ac-90e8-78f347805685",
+		"name": "Ipssi_API_hebdo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "USERS",
+			"item": [
+				{
+					"name": "User - Get all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@gmail.com\",\n\t\"role\": \"admin\",\n\t\"password\": \"root\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/users",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User - Get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:4000/users/60dc1f8e42c58a62201ef68e",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "4000",
+							"path": [
+								"users",
+								"60dc1f8e42c58a62201ef68e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User - Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"user@mail.com\",\n\t\"role\": \"user\",\n\t\"password\": \"root\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/users/create",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"users",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User - Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@mail.com\",\n\t\"password\": \"root\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:4000/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "4000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InF1ZW50aW5AZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2MjUxNDQwOTQsImV4cCI6MTYyNTIzMDQ5NH0.gp6l53HeLWT7E--FVmYxjyJWU24Zg82lfvz9Fs2dz4c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:4000/users/:userid/update",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "4000",
+							"path": [
+								"users",
+								":userid",
+								"update"
+							],
+							"variable": [
+								{
+									"key": "userid",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InF1ZW50aW5AZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2MjUxNDQwOTQsImV4cCI6MTYyNTIzMDQ5NH0.gp6l53HeLWT7E--FVmYxjyJWU24Zg82lfvz9Fs2dz4c",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:4000/users/:userid/delete",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "4000",
+							"path": [
+								"users",
+								":userid",
+								"delete"
+							],
+							"variable": [
+								{
+									"key": "userid",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ARTICLES",
+			"item": [
+				{
+					"name": "Article - Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/articles",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Article - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGUyYmVlNjc4M2MwMGMyMGQzMDgzOSIsImVtYWlsIjoidXNlckBtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjI1MTcyOTg4LCJleHAiOjE2MjUyNTkzODh9.n8UQYh2ateE3ejh6IXYHAKkh2sXCDzg91umlLwNrWEg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "article 6",
+									"type": "text"
+								},
+								{
+									"key": "subtitle",
+									"value": "sous titre",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "blabla",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/articles/create",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Article - Get one",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:4000/articles/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60dda2f6c6c9a76ff65233e1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Article - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGUyYmVlNjc4M2MwMGMyMGQzMDgzOSIsImVtYWlsIjoidXNlckBtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjI1MTcyOTg4LCJleHAiOjE2MjUyNTkzODh9.n8UQYh2ateE3ejh6IXYHAKkh2sXCDzg91umlLwNrWEg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:4000/articles/:id/delete",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								":id",
+								"delete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60dda2fbc6c9a76ff65233e4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Article - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGUyYmVlNjc4M2MwMGMyMGQzMDgzOSIsImVtYWlsIjoidXNlckBtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjI1MTcyOTg4LCJleHAiOjE2MjUyNTkzODh9.n8UQYh2ateE3ejh6IXYHAKkh2sXCDzg91umlLwNrWEg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "new article  2 updated",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "subtitle",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "blabla",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "author",
+									"value": "60dc2b31c556e4780d454042",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/articles/:id/update",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								":id",
+								"update"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60dda40beccfe2716f027ab1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ANIMALS",
+			"item": [
+				{
+					"name": "Animal - Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/animals",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Animal - Get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/animals/:animalId",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								":animalId"
+							],
+							"variable": [
+								{
+									"key": "animalId",
+									"value": "60dd8ff2d8a0fe08549e6adc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Animal - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGUyYmU1Njc4M2MwMGMyMGQzMDgzNCIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2MjUxNzMwMDksImV4cCI6MTYyNTI1OTQwOX0.3Jdrgu4slTJ4oSaL2mrYmDF9rT3rM2JhOqz8_hZCkkA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "race",
+									"value": "Maine Coon",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Olympéa",
+									"type": "text"
+								},
+								{
+									"key": "weight",
+									"value": "10",
+									"description": "in kg",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "3",
+									"description": "in years",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/animals/create",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Animal - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InF1ZW50aW5AaG90bWFpbC5mciIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYyNTE0MzU3MiwiZXhwIjoxNjI1MjI5OTcyfQ.f7chrvLT8Ke2q4fTCBPGPT6PbIHW0nLejeANNTNGS6g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "race",
+									"value": "Carlin",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "Medor",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "weight",
+									"value": "10",
+									"description": "in kg",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "age",
+									"value": "1",
+									"description": "in year",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/animals/:id/update",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								":id",
+								"update"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60ddeef491b7a77f372b96e2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Animal - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InF1ZW50aW5AaG90bWFpbC5mciIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYyNTE0MzU3MiwiZXhwIjoxNjI1MjI5OTcyfQ.f7chrvLT8Ke2q4fTCBPGPT6PbIHW0nLejeANNTNGS6g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:4000/animals/:id/delete",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								":id",
+								"delete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PRODUCTS",
+			"item": [
+				{
+					"name": "Product - Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/products",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product - Get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/products/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGUyYmU1Njc4M2MwMGMyMGQzMDgzNCIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2MjUxNzMwMDksImV4cCI6MTYyNTI1OTQwOX0.3Jdrgu4slTJ4oSaL2mrYmDF9rT3rM2JhOqz8_hZCkkA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Brosse métallique",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Chat",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Brosse en métal pour mieux défaire les noeuds de nos petits amis.",
+									"description": "in years",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/products/create",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"products",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InF1ZW50aW5AaG90bWFpbC5mciIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYyNTE0MzU3MiwiZXhwIjoxNjI1MjI5OTcyfQ.f7chrvLT8Ke2q4fTCBPGPT6PbIHW0nLejeANNTNGS6g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "race",
+									"value": "Carlin",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "Medor",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "weight",
+									"value": "10",
+									"description": "in kg",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "age",
+									"value": "1",
+									"description": "in year",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/animals/:id/update",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								":id",
+								"update"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60ddeef491b7a77f372b96e2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InF1ZW50aW5AaG90bWFpbC5mciIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYyNTE0MzU3MiwiZXhwIjoxNjI1MjI5OTcyfQ.f7chrvLT8Ke2q4fTCBPGPT6PbIHW0nLejeANNTNGS6g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:4000/animals/:id/delete",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								":id",
+								"delete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DONATIONS",
+			"item": [
+				{
+					"name": "Donations - Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/donations",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"donations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Donations - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InF1ZW50aW5AZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2MjUxNTU1MzEsImV4cCI6MTYyNTI0MTkzMX0.EpZQCmRdhKHLuaYHDBbAIMJrxstWHnQhBeJDw5hevXU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "amount",
+									"value": "1000",
+									"description": "in €",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/donations/give",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"donations",
+								"give"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

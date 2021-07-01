@@ -59,7 +59,7 @@ module.exports = (server) => {
      *         description: Server internal error.
      */
     server.route('/products/:productId/update')
-        .put(productController.update_products);
+        .put(productController.update_product);
 
     /**
      * @openapi
