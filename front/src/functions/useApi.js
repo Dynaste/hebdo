@@ -21,11 +21,19 @@ export const get = async(path) => {
 }
 
 export const logUser = async(body) => {
-    const res = await axios.post(`${process.env.REACT_APP_END_POINT}login`, body, headers);
-    const storage = {
-        token: res.data.token,
-        timestamp: Math.floor(Date.now() / 1000)
+    try{
+        console.log(`${process.env.REACT_APP_END_POINT}login`);
+        console.log({body});
+        console.log({headers})
+        const res = await axios.post(`${process.env.REACT_APP_END_POINT}login`, body, headers);
+        const storage = {
+            token: res.data.data,
+            timestamp: Math.floor(Date.now() / 1000)
+        }
+        localStorage.setItem('token', JSON.stringify(storage));
+        return res;
+    }catch(err){
+        return err;
     }
-    localStorage.setItem('token', JSON.stringify(storage));
-    return res;
+    
 }
