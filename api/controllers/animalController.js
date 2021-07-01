@@ -29,7 +29,7 @@ exports.get_all_animals = (req, res) => {
                             ...animal._doc,
                             type: animalTypes[animal._doc.type],
                             link: `http://${hostname}:${port}/animals/${animal._id}`,
-                            /* _options: {
+                            _options: {
                                 create: {
                                     method: 'POST',
                                     link: `http://${hostname}:${port}/animal/${animal._id}/create`
@@ -42,7 +42,7 @@ exports.get_all_animals = (req, res) => {
                                     method: 'DELETE',
                                     link: `http://${hostname}:${port}/animal/${animal._id}/delete`
                                 }
-                            } */
+                            }
                         }
 
                         animalsArr .push({...animalObj});
@@ -116,7 +116,7 @@ exports.create_animal = (req, res) => {
     try {
         check_create_element(req, Animal, async () => {
             verify_token(req, res, true, async () => {
-                await Animal.findOne({race, name, type: animalTypes[type], age, weight}, async (err, animal) => {
+                await Animal.findOne({race, name, type, age, weight}, async (err, animal) => {
                     if (err) {
                         statusCode = 500;
                         throw {type: 'server_error'};
@@ -127,7 +127,7 @@ exports.create_animal = (req, res) => {
     
                     } else if (!animal) {
                         const newAnimal = await new Animal({
-                            type: animalTypes[type],
+                            type: type,
                             race: capitalize(race),
                             name: capitalize(name),
                             weight,
@@ -199,7 +199,7 @@ exports.update_animal = async (req, res) => {
                     const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
                         {
                             ...req.body,
-                            type: animalTypes[req.body.type],
+                            type: req.body.type,
                         },
                         {
                             upsert: false,
@@ -230,21 +230,20 @@ exports.delete_animal = (req, res) => {
         if (animalId) {
             verify_token(req, res, true, async () => {
                 Animal.findOneAndDelete({_id: animalId}, (err, animal) => {
-                    console.log({animal})
                     if (err) {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (animal) {
                         json_response(req, res, statusCode, 'DELETE', {type: 'success_delete', objName: 'Animal', value: animal._id}, animal);
                         return;
-                    } else if (animal === null) {
+                    } else if (!animal) {
                         statusCode = 404;
-                        json_response(req, res, statusCode, 'DELETE', {type: 'not_found', objName: 'Animal'}, null, true);
-                        return;
+                        throw {type: 'not_found', objName: 'Animal'};
                     }
                 })
             })
         } else {
+            statusCode = 400;
             throw {type: 'id_required'};
         }
     } catch (err) {

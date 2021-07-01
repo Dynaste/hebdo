@@ -249,8 +249,8 @@ exports.delete_an_article = async (req, res) => {
                         json_response(req, res, statusCode, 'DELETE', {type: 'not_found', objName: 'Article'}, null, true);
                         return;
                     }
-                })
-            })
+                });
+            });
         } else {
             throw {type: 'id_required'};
         }
