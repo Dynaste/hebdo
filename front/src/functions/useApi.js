@@ -2,38 +2,73 @@ import axios from 'axios';
 
 const isTokenStored = () => {
     const retrievedObject = localStorage.getItem('token');
-    if(retrievedObject){
+    if (
+        retrievedObject &&
+        Math.floor(Date.now() / 1000) - retrievedObject.timestamp < 86400
+    ) {
         JSON.parse(retrievedObject);
         return retrievedObject.token;
-    }else {
-        return ''
+    } else {
+        return '';
     }
-    
-}
+};
 const headers = {
     'Content-Type': 'application/json',
-    'Authorization': isTokenStored()
-}
+    'Authorization': isTokenStored(),
+};
 
-export const get = async(path) => {
-    const res = await axios.get(`${process.env.REACT_APP_END_POINT}${path}`, headers);
+export const isTokenValid = () => {
+    const retrievedObject = localStorage.getItem('token');
+    if (retrievedObject) {
+        JSON.parse(retrievedObject);
+        if (
+            Math.floor(Date.now() / 1000) - retrievedObject.timestamp >=
+            86400
+        ) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+};
+
+export const get = async (path) => {
+    const res = await axios.get(
+        `${process.env.REACT_APP_END_POINT}${path}`,
+        headers
+    );
     return res;
-}
+};
 
-export const logUser = async(body) => {
-    try{
-        console.log(`${process.env.REACT_APP_END_POINT}login`);
-        console.log({body});
-        console.log({headers})
-        const res = await axios.post(`${process.env.REACT_APP_END_POINT}login`, body, headers);
+export const logUser = async (body) => {
+    try {
+        const res = await axios.post(
+            `${process.env.REACT_APP_END_POINT}login`,
+            body,
+            headers
+        );
         const storage = {
             token: res.data.data,
-            timestamp: Math.floor(Date.now() / 1000)
-        }
+            timestamp: Math.floor(Date.now() / 1000),
+        };
         localStorage.setItem('token', JSON.stringify(storage));
         return res;
-    }catch(err){
+    } catch (err) {
         return err;
     }
-    
-}
+};
+
+export const signUser = async (body) => {
+    try {
+        const res = await axios.post(
+            `${process.env.REACT_APP_END_POINT}users/create`,
+            body,
+            headers
+        );
+        return res;
+    } catch (err) {
+        return err;
+    }
+};
