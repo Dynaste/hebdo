@@ -253,7 +253,7 @@ exports.login = (req, res) => {
                                     console.log({token});
                                     const data = {
                                         token,
-                                        userId: user._id
+                                        role: user.role
                                     }
                                     json_response(req, res, statusCode, 'POST', {type: 'success_login'}, data);
                                 } else {
