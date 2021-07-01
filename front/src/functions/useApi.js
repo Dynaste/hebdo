@@ -2,20 +2,35 @@ import axios from 'axios';
 
 const isTokenStored = () => {
     const retrievedObject = localStorage.getItem('token');
+    const parsedObj = JSON.parse(retrievedObject);
     if (
         retrievedObject &&
-        Math.floor(Date.now() / 1000) - retrievedObject.timestamp < 86400
+        Math.floor(Date.now() / 1000) - parsedObj.timestamp < 86400
     ) {
-        JSON.parse(retrievedObject);
-        return retrievedObject.token;
+        return parsedObj.token;
     } else {
         return '';
     }
 };
 const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': isTokenStored(),
+    'headers': {
+        'Content-Type': 'application/json',
+        'Authorization': isTokenStored(),
+    }
+    
 };
+
+export const isAdmin = () => {
+    const retrievedObject = localStorage.getItem('token');
+    const parsedObj = JSON.parse(retrievedObject);
+
+    if(parsedObj.role === 'admin'){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 
 export const isTokenValid = () => {
     const retrievedObject = localStorage.getItem('token');
@@ -42,6 +57,32 @@ export const get = async (path) => {
     return res;
 };
 
+export const post = async (path, body) => {
+    const res = await axios.post(
+        `${process.env.REACT_APP_END_POINT}${path}`,
+        body,
+        headers
+    );
+    return res;
+};
+
+export const put = async (path, body) => {
+    const res = await axios.put(
+        `${process.env.REACT_APP_END_POINT}${path}`,
+        body,
+        headers
+    );
+    return res;
+};
+
+export const del = async (path) => {
+    const res = await axios.delete(
+        `${process.env.REACT_APP_END_POINT}${path}`,
+        headers
+    );
+    return res;
+};
+
 export const getLink = async (path) => {
     const res = await axios.get(
         `${path}`,
@@ -58,10 +99,11 @@ export const logUser = async (body) => {
             headers
         );
         const storage = {
-            token: res.data.data,
+            token: res.data.data.token,
+            role: res.data.data.role,
             timestamp: Math.floor(Date.now() / 1000),
         };
-        localStorage.setItem('token', JSON.stringify(storage));
+        await localStorage.setItem('token', JSON.stringify(storage));
         return res;
     } catch (err) {
         return err;
