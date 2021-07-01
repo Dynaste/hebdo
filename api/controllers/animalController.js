@@ -9,7 +9,7 @@ const {
     check_update,
     capitalize
 } = require('../utils/utils');
-const { animalTypes } = require('../models/animalTypes');
+const { animalTypes } = require('../models/static/animalTypes');
 
 exports.get_all_animals = (req, res) => {
     let statusCode = 200;
@@ -127,7 +127,7 @@ exports.create_animal = (req, res) => {
     
                     } else if (!animal) {
                         const newAnimal = await new Animal({
-                            type: type,
+                            type,
                             race: capitalize(race),
                             name: capitalize(name),
                             weight,
@@ -190,7 +190,7 @@ exports.create_animal = (req, res) => {
 
 exports.update_animal = async (req, res) => {
     let statusCode = 201;
-    const animalId = req.params.animalId;
+    const {animalId} = req.params;
 
     try {
         if (animalId) {
@@ -198,8 +198,7 @@ exports.update_animal = async (req, res) => {
                 verify_token(req, res, true, async () => {
                     const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
                         {
-                            ...req.body,
-                            type: req.body.type,
+                            ...req.body
                         },
                         {
                             upsert: false,

@@ -5,4 +5,4 @@ exports.animalTypes = [
     "Rat",
     "Lapin",
     "Furet"
-]
+];
