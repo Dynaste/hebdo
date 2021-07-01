@@ -36,5 +36,4 @@ const animalSchema = new Schema({
 })
 
 animalSchema.plugin(uniqueValidator, { message: "Error, expected \"{PATH}\" ({VALUE}) to be unique "});
-
 module.exports = mongoose.model("Animal", animalSchema);

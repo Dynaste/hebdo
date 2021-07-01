@@ -9,6 +9,8 @@ const {
     check_update,
     capitalize
 } = require('../utils/utils');
+const {productCategories} = require('../models/static/productCategories');
+
 
 exports.get_all_products = (req, res) => {
     let statusCode = 200;
@@ -23,6 +25,7 @@ exports.get_all_products = (req, res) => {
                     products.forEach(product => {
                         const productObj = {
                             ...product._doc,
+                            category: productCategories[product._doc.category],
                             link: `http://${hostname}:${port}/products/${product._id}`,
                             _options: {
                                 create: {
@@ -65,6 +68,7 @@ exports.get_one_product = (req, res) => {
                 } else if (product) {
                     const objProduct = {
                         ...product._doc,
+                        category: productCategories[product._doc.category],
                         _options: {
                             create: {
                                 method: 'POST',
@@ -113,7 +117,8 @@ exports.create_product = (req, res) => {
     
                     } else if (!product) {
                         const newProduct = await new Product({
-                            ...req.body
+                            ...req.body,
+                            name: capitalize(name)
                         });
 
                         const data = {
@@ -164,7 +169,8 @@ exports.update_product = async (req, res) => {
                 verify_token(req, res, true, async () => {
                     const updatedProduct = await Product.findOneAndUpdate({_id: productId}, 
                         {
-                            ...req.body
+                            ...req.body,
+                            name: capitalize(name)
                         },
                         {
                             upsert: false,
