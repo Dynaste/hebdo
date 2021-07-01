@@ -48,13 +48,13 @@ exports.get_all_animals = (req, res) => {
                         animalsArr .push({...animalObj});
                     });
                 }
-                json_response(req, res, statusCode, 'GET', {type: 'get_many', objName: 'Animal', value: animalsArr.length}, animalsArr );
+                json_response(req, res, statusCode, {type: 'get_many', objName: 'Animal', value: animalsArr.length}, animalsArr );
                 return;
             }
         })
     } catch(err) {
         console.log(err);
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -94,7 +94,7 @@ exports.get_one_animal = (req, res) => {
 
                     }
                     
-                    json_response(req, res, statusCode, 'GET', {type: 'get_one', objName: 'Animal'}, objAnimal);
+                    json_response(req, res, statusCode, {type: 'get_one', objName: 'Animal'}, objAnimal);
                     return;
                     
                 } else {
@@ -104,7 +104,7 @@ exports.get_one_animal = (req, res) => {
             });   
         });
     } catch (err) {
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -122,7 +122,7 @@ exports.create_animal = (req, res) => {
                         throw {type: 'server_error'};
                     } else if (animal) {
                         statusCode = 409;
-                        json_response(req, res, statusCode, 'POST', {type: 'exist', objName: 'Animal'}, null);
+                        json_response(req, res, statusCode, {type: 'exist', objName: 'Animal'}, null);
                         return;
     
                     } else if (!animal) {
@@ -174,7 +174,7 @@ exports.create_animal = (req, res) => {
                                 throw { type: 'error_create' }
                             } else {
                                 statusCode = 201;
-                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'Animal'}, data);
+                                json_response(req, res, statusCode, {type: 'success_create', objName: 'Animal'}, data);
                                 return;
                             }
                         })
@@ -183,7 +183,7 @@ exports.create_animal = (req, res) => {
             })
         })
     } catch (err) {
-        json_response(req, res, statusCode, 'POST', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -207,7 +207,7 @@ exports.update_animal = async (req, res) => {
                         })
 
                     if (updatedAnimal) {
-                        json_response(req, res, statusCode, 'PUT', {type: 'success_update', objName: 'Animal', value: updatedAnimal._id}, updatedAnimal);
+                        json_response(req, res, statusCode, {type: 'success_update', objName: 'Animal', value: updatedAnimal._id}, updatedAnimal);
                         return;
                     }
                 });
@@ -216,7 +216,7 @@ exports.update_animal = async (req, res) => {
             throw 'Id is required.';
         }
     } catch (err) {
-        json_response(req, res, statusCode, 'PUT', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -233,7 +233,7 @@ exports.delete_animal = (req, res) => {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (animal) {
-                        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete', objName: 'Animal', value: animal._id}, animal);
+                        json_response(req, res, statusCode, {type: 'success_delete', objName: 'Animal', value: animal._id}, animal);
                         return;
                     } else if (!animal) {
                         statusCode = 404;
@@ -246,7 +246,40 @@ exports.delete_animal = (req, res) => {
             throw {type: 'id_required'};
         }
     } catch (err) {
-        json_response(req, res, statusCode, 'DELETE', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
+        return;
+    }
+}
+
+exports.adopt_animal = () => {
+    let statusCode = 201;
+    const {animalId} = req.params;
+
+    try {
+        if (animalId) {
+            check_update(req, 'animalId', async () => {
+                verify_token(req, res, false, async (payload) => {
+                    const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
+                        {
+                            adopterId: payload.userId
+                        },
+                        {
+                            upsert: false,
+                            new: true,
+                            returnOriginal: false
+                        })
+
+                    if (updatedAnimal) {
+                        json_response(req, res, statusCode, {type: 'success_adoption', objName: animalTypes[updatedAnimal.type], value: updatedAnimal.name}, updatedAnimal);
+                        return;
+                    }
+                });
+            })
+        } else {
+            throw 'Id is required.';
+        }
+    } catch (err) {
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }

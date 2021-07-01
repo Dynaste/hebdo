@@ -8,14 +8,23 @@ const swaggerJsdoc = require('swagger-jsdoc');
 
 const options = {
     definition: {
-      openapi: '3.0.0',
-      info: {
-        title: 'API',
-        version: '1.0.0',
-      },
-      servers: {
-          url: 'http://127.0.0.1:4000'
-      }
+        openapi: '3.0.0',
+        info: {
+            title: 'API',
+            version: '1.0.0',
+        },
+        servers: {
+            url: 'http://localhost:4000'
+        },
+        components: {
+            schemas : {
+                Animal: {
+                    required: [
+                        "name"
+                    ]
+                }
+            }
+        }
     },
     apis: ['./routes/*.js'], // files containing annotations as above
 };

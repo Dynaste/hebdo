@@ -16,12 +16,9 @@ exports.get_all_donations = (req, res) => {
                 statusCode = 500;
                 throw {type: 'server_error'};
             } else if (donations) {
-                console.log(donations)
                 let donationsArr = [];
                 if (donations.length > 0) {
-                    
                     donations.forEach(donation => {
-
                         User.findOne({_id: userId}, (err, user) => {
                             if (err) {
                                 statusCode = 500;
@@ -43,13 +40,12 @@ exports.get_all_donations = (req, res) => {
                         })
                     });
                 }
-                json_response(req, res, statusCode, 'GET', {type: 'get_many', objName: 'Donation', value: donationsArr.length}, donationsArr );
+                json_response(req, res, statusCode, {type: 'get_many', objName: 'Donation', value: donationsArr.length}, donationsArr );
                 return;
             }
         })
     } catch(err) {
-        console.log(err);
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -88,14 +84,14 @@ exports.create_donation = (req, res) => {
                         throw { type: 'error_create' }
                     } else {
                         statusCode = 201;
-                        json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'Donation'}, data);
+                        json_response(req, res, statusCode, {type: 'success_create', objName: 'Donation'}, data);
                         return;
                     }
                 })
             })
         })
     } catch (err) {
-        json_response(req, res, statusCode, 'POST', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }

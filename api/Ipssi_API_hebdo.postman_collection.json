@@ -621,6 +621,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Animal - Adoption",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/animals/:id/adopt",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								":id",
+								"adopt"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
