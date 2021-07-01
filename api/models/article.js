@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
+
 const articleSchema = new Schema({
     title: {
         type: String,
@@ -17,10 +18,9 @@ const articleSchema = new Schema({
        required: true,
        trim: true
     },
-    author: {
-        type: Schema.Types.ObjectId,
-        required: "UserId is required",
-        ref: "User",
+    authorId: {
+        type: String,
+        required: true,
       },
 })
 

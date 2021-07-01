@@ -68,7 +68,7 @@ module.exports = (server) => {
      *     tags: [Animals]
      *     description: Delete a specific item in Animal collection
      *     responses:
-     *       200:
+     *       204:
      *         description: Returns all animals.
      *       500:
      *         description: Server internal error.

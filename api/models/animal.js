@@ -27,6 +27,12 @@ const animalSchema = new Schema({
     age: {
         type: Number,
         required: true
+    },
+    adoptDate: {
+        type: Date,
+    },
+    adopterId: {
+        type: String
     }
 })
 

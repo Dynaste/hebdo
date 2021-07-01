@@ -18,12 +18,12 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
                     throw {type: 'forbidden'};
                 } else {
                     if (adminOnly && payload['role'] === 'admin') {
-                        next();
+                        next({userId: payload['userId']});
                     } else if (adminOnly && payload['role'] !== 'admin') {
                         statusCode = 403;
                         throw {type: 'admin_only'};
                     } else if (!adminOnly && (payload['role'] === 'user' || payload['role'] === 'admin')) {
-                        next();
+                        next({userId: payload['userId']});
                     } else {
                         statusCode = 500;
                         throw {type: 'server_error'};

@@ -1,7 +1,6 @@
 require('dotenv').config();
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-// const validator = ('validator');
 const JWT_TOKEN = process.env.JWT_TOKEN;
 const { port, baseUrl: hostname } = require('./../config');
 const {
@@ -125,7 +124,6 @@ exports.get_one_user = (req, res) => {
 
 exports.update_one_user = (req, res) => {
     let statusCode = 200;
-    let error;
 
     try {
         check_update(req, 'userId', () => {
@@ -240,7 +238,7 @@ exports.login = (req, res) => {
                 } else if (user) {
                     if (req.body.password === user.password) {
                         jwt.sign(
-                            { email: user.email, role: user.role },
+                            { id: user._id, email: user.email, role: user.role },
                             JWT_TOKEN,
                             { expiresIn: '24 hours' },
                             async (err, token) => {
@@ -295,8 +293,6 @@ exports.signup = async (req, res) => {
                             role,
                             email: email.toLowerCase(),
                             password,
-                            adoptedAnimals: [],
-                            boughtProducts: []
                         });
 
                         await newUser.save((error, cUser) => {

@@ -18,30 +18,6 @@ const userSchema = new Schema({
         required: 'An email is required',
         unique: true
     },
-    adoptedAnimals: {
-        type: [{
-            idAnimal: {
-                type: String,
-                trim: true
-            },
-            adoptDate: {
-                type: Date,
-            }
-        }],
-        required: true
-    },
-    boughtProducts: {
-        type: [{
-            idProduct: {
-                type: String,
-                trim: true
-            },
-            purchaseDate: {
-                type: Date,
-            }
-        }],
-        required: true
-    }
 })
 
 userSchema.plugin(uniqueValidator, { message: "Error, expected \"{PATH}\" ({VALUE}) to be unique "});
