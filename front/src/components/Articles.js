@@ -64,10 +64,10 @@ const Articles = ({ articles, setReload, reload }) => {
     };
 
     const onChange = (inputName, event) => {
-            setNewArticle({
-                ...newArticle,
-                [inputName]: event.target.value,
-            });
+        setNewArticle({
+            ...newArticle,
+            [inputName]: event.target.value,
+        });
     };
 
     const postNewArticle = async () => {
@@ -85,28 +85,29 @@ const Articles = ({ articles, setReload, reload }) => {
 
     return (
         <div className={classes.container}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleClickOpen('POST')}
-                >
-                    Ajouter un article
-                </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleClickOpen('POST')}
+            >
+                Ajouter un article
+            </Button> 
 
             <div className={classes.listContainer}>
-                {Object.keys(articles).map(
-                    (item, key) =>
-                        item !== '_options' && (
-                            <Box
-                                boxShadow={1}
-                                className={classes.articleContainer}
-                                key={key}
-                                onClick={() => openArticle(articles[item])}
-                            >
-                                <p>{articles[item].title}</p>
-                            </Box>
-                        )
-                )}
+                {articles &&
+                    Object.keys(articles).map(
+                        (item, key) =>
+                            item !== '_options' && (
+                                <Box
+                                    boxShadow={1}
+                                    className={classes.articleContainer}
+                                    key={key}
+                                    onClick={() => openArticle(articles[item])}
+                                >
+                                    <p>{articles[item].title}</p>
+                                </Box>
+                            )
+                    )}
             </div>
             <Dialog
                 open={open}
@@ -129,7 +130,9 @@ const Articles = ({ articles, setReload, reload }) => {
                                 margin="dense"
                                 fullWidth
                                 label="Sous-titre"
-                                onChange={(event) => onChange('subtitle', event)}
+                                onChange={(event) =>
+                                    onChange('subtitle', event)
+                                }
                             />
                             <TextareaAutosize
                                 aria-label="minimum height"
@@ -151,9 +154,7 @@ const Articles = ({ articles, setReload, reload }) => {
                 )}
                 {dialogContent === 'GET' && (
                     <>
-                        <DialogTitle>
-                            {selectedArticle.title}
-                        </DialogTitle>
+                        <DialogTitle>{selectedArticle.title}</DialogTitle>
                         <DialogContent style={{ textAlign: 'center' }}>
                             <h4>Sous-titre: {selectedArticle.subtitle}</h4>
                             <p>{selectedArticle.content}</p>

@@ -248,8 +248,8 @@ const Animals = ({ animals, setReload, reload }) => {
                         <DialogContent style={{ textAlign: 'center' }}>
                             <h4>Type: {selectedAnimal.type}</h4>
                             <h4>Race: {selectedAnimal.race}</h4>
-                            <p>Poids: {selectedAnimal.weight}</p>
-                            <p>Age: {selectedAnimal.age}</p>
+                            <p>Poids: {selectedAnimal.weight} kg</p>
+                            <p>Age: {selectedAnimal.age} an{selectedAnimal.age > 1 && 's'}</p>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">

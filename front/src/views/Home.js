@@ -9,7 +9,7 @@ import Tab from '@material-ui/core/Tab';
 
 import Articles from '../components/Articles';
 import Animals from '../components/Animals';
-import Products from '../components/Articles';
+import Products from '../components/Products';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -64,7 +64,7 @@ const Home = () => {
     const history = useHistory();
     const classes = useStyles();
 
-    const [articles, setArticles] = React.useState(null);
+    const [articles, setArticles] = React.useState(false);
     const [animals, setAnimals] = React.useState(null);
     const [products, setProducts] = React.useState(null);
     const [value, setValue] = React.useState(0);
@@ -77,22 +77,23 @@ const Home = () => {
 
     const getArticles = async () => {
         const res = await get('articles');
-        if ((res.statusCode = 200)) {
-            setArticles(res.data.data);
-        }
+        await setArticles(res.data.data);
     };
 
     const getAnimals = async () => {
         const res = await get('animals');
-        console.log(res);
-        if ((res.statusCode = 200)) {
-            setAnimals(res.data.data);
-        }
+        await setAnimals(res.data.data);
+    };
+
+    const getProducts = async () => {
+        const res = await get('products');
+        await setProducts(res.data.data);
     };
 
     React.useEffect(() => {
         isTokenValid() && getArticles();
         isTokenValid() && getAnimals();
+        isTokenValid() && getProducts();
     }, [reload]);
 
     const handleChange = (event, newValue) => {
@@ -124,7 +125,6 @@ const Home = () => {
                             indicatorColor="primary"
                             textColor="primary"
                             variant="fullWidth"
-                            aria-label="full width tabs example"
                         >
                             <Tab label="Articles" />
                             <Tab label="Animals" />
@@ -137,22 +137,45 @@ const Home = () => {
                         index={0}
                         className={classes.tabPanelContent}
                     >
-                        {articles && <Articles articles={articles} setReload={setReload} reload={reload}/>}
+                        {articles && (
+                            <Articles
+                                articles={articles}
+                                setReload={setReload}
+                                reload={reload}
+                            />
+                        )}
                     </TabPanel>
                     <TabPanel
                         value={value}
                         index={1}
                         className={classes.tabPanelContent}
                     >
-                        {animals && <Animals animals={animals} setReload={setReload} reload={reload}/>}
+                        {animals && (
+                            <Animals
+                                animals={animals}
+                                setReload={setReload}
+                                reload={reload}
+                            />
+                        )}
                     </TabPanel>
                     <TabPanel
                         value={value}
                         index={2}
-                        className={classes.articleContainer}
+                        className={classes.tabPanelContent}
                     >
-                        {products && <Products products={products} setReload={setReload} reload={reload}/>}
+                        {products && (
+                            <Products
+                                products={products}
+                                setReload={setReload}
+                                reload={reload}
+                            />
+                        )}
                     </TabPanel>
+                    <TabPanel
+                        value={value}
+                        index={3}
+                        className={classes.tabPanelContent}
+                    ></TabPanel>
                 </div>
             ) : (
                 <Redirect to={{ pathname: '/login' }} />
