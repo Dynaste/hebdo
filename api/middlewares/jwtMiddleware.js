@@ -18,29 +18,26 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
                     throw {type: 'forbidden'};
                 } else {
                     if (adminOnly && payload['role'] === 'admin') {
-                        next({userId: payload['userId']});
+                        next({userId: payload['id']});
                     } else if (adminOnly && payload['role'] !== 'admin') {
                         statusCode = 403;
                         throw {type: 'admin_only'};
                     } else if (!adminOnly && (payload['role'] === 'user' || payload['role'] === 'admin')) {
-                        next({userId: payload['userId']});
+                        next({userId: payload['id']});
                     } else {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     }
                 }
             }).catch(err => {
-                // console.log("ato anaty catch;;;;",err)
                 json_response(req, res, statusCode, 'GET', err, null, true);
                 return;
             });
         } else {
             statusCode = 500;
-            // console.log("ato anaty else;;;;",err)
             throw {type: 'server_error'};
        }
     } catch (err) {
-        // console.log("FARANY catch;;;;",err)
         json_response(req, res, statusCode, 'GET', err, null, true);
         return;
     }

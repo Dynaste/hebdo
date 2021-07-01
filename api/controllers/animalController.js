@@ -27,6 +27,7 @@ exports.get_all_animals = (req, res) => {
                     animals.forEach(animal => {
                         const animalObj = {
                             ...animal._doc,
+                            type: animalTypes[animal._doc.type],
                             link: `http://${hostname}:${port}/animals/${animal._id}`,
                             /* _options: {
                                 create: {
@@ -75,6 +76,7 @@ exports.get_one_animal = (req, res) => {
 
                     const objAnimal = {
                         ...animal._doc,
+                        type: animalTypes[animal._doc.type],
                         _options: {
                             create: {
                                 method: 'POST',
@@ -192,12 +194,12 @@ exports.update_animal = async (req, res) => {
 
     try {
         if (animalId) {
-            check_update(req, 'animalId', () => {
+            check_update(req, 'animalId', async () => {
                 verify_token(req, res, true, async () => {
                     const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
                         {
+                            ...req.body,
                             type: animalTypes[req.body.type],
-                            ...req.body
                         },
                         {
                             upsert: false,
