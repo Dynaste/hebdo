@@ -129,7 +129,9 @@ exports.create_animal = (req, res) => {
                             race: capitalize(race),
                             name: capitalize(name),
                             weight,
-                            age
+                            age,
+                            adoptDate: null,
+                            adopterId: null
                         });
 
                         const data = {
@@ -194,7 +196,7 @@ exports.update_animal = async (req, res) => {
                 verify_token(req, res, true, async () => {
                     const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
                         {
-                            type: animalTypes[type],
+                            type: animalTypes[req.body.type],
                             ...req.body
                         },
                         {

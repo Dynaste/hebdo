@@ -55,7 +55,7 @@ exports.get_all_donations = (req, res) => {
 }
 
 exports.create_donation = (req, res) => {
-    const {userId, date, amount} = req.body;
+    const {amount} = req.body;
     let statusCode = 201;
 
     try {
@@ -63,7 +63,7 @@ exports.create_donation = (req, res) => {
             verify_token(req, res, false, async () => {
                 const newDonation = await new Donation({
                     userId,
-                    date: new Date(date),
+                    date: new Date(),
                     amount
                 });
 
@@ -74,9 +74,6 @@ exports.create_donation = (req, res) => {
                         properties: {
                             userId: {
                                 type: 'String'
-                            },
-                            date: {
-                                type: 'Date'
                             },
                             amount: {
                                 type: 'Number'
