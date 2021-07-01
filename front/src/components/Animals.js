@@ -8,7 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import { MenuItem } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { post } from '../functions/useApi';
+import { isAdmin, post, put } from '../functions/useApi';
 
 const useStyles = makeStyles(() => ({
     articleContainer: {
@@ -47,11 +47,22 @@ const Animals = ({ animals }) => {
     const [selectedAnimal, setSelectedAnimal] = React.useState(false);
 
     const [newAnimal, setNewAnimal] = React.useState({
-        type: 1
+        type: 1,
     });
 
     const handleClickOpen = (type) => {
         setDialogContent(type);
+        if(type==='PUT'){
+            const typeValue = typeChoice.find(item => item.label === selectedAnimal.type);
+            console.log(typeValue.value)
+            setNewAnimal({
+                name: selectedAnimal.name,
+                weight: selectedAnimal.weight,
+                age: selectedAnimal.age,
+                type: typeValue.value,
+                race: selectedAnimal.race,
+            })
+        }
         setOpen(true);
     };
 
@@ -87,28 +98,44 @@ const Animals = ({ animals }) => {
         }
     };
 
-    const postNewAnimal = async() => {
+    const postNewAnimal = async () => {
         console.log(newAnimal);
         const res = await post('animals/create', newAnimal);
         console.log(res);
 
-        if(res.status === 201){
+        if (res.status === 201) {
             handleClose();
+            setNewAnimal(null);
+        } else {
+            alert(res.data.message);
         }
-        else{
-            alert(res.data.message)
+    };
+
+    const updateAnimal = async () => {
+        console.log(newAnimal);
+        const res = await put(`animals/${selectedAnimal._id}/update`, newAnimal);
+        console.log(res);
+
+        if (res.status === 201) {
+            handleClose();
+            setNewAnimal(null);
+        } else {
+            alert(res.data.message);
         }
-    }
+    };
 
     return (
         <div className={classes.container}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleClickOpen('POST')}
-            >
-                Ajouter un animal
-            </Button>
+            {isAdmin() && (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleClickOpen('POST')}
+                >
+                    Ajouter un animal
+                </Button>
+            )}
+
             <div className={classes.listContainer}>
                 {animals.map(
                     (item, key) =>
@@ -140,18 +167,14 @@ const Animals = ({ animals }) => {
                             <TextField
                                 margin="dense"
                                 label="Nom"
-                                onChange={(event) =>
-                                    onChange('name', event)
-                                }
+                                onChange={(event) => onChange('name', event)}
                             />
                             <TextField
                                 select
                                 label="Type"
                                 margin="dense"
                                 value={newAnimal.type}
-                                onChange={(event) =>
-                                    onChange('type', event)
-                                }
+                                onChange={(event) => onChange('type', event)}
                                 helperText="Please select the type of your animal"
                             >
                                 {typeChoice.map((option) => (
@@ -166,9 +189,7 @@ const Animals = ({ animals }) => {
                             <TextField
                                 margin="dense"
                                 label="Race"
-                                onChange={(event) =>
-                                    onChange('race', event)
-                                }
+                                onChange={(event) => onChange('race', event)}
                             />
                             <TextField
                                 margin="dense"
@@ -190,7 +211,10 @@ const Animals = ({ animals }) => {
                             <Button onClick={handleClose} color="primary">
                                 Annuler
                             </Button>
-                            <Button onClick={() => postNewAnimal()} color="primary">
+                            <Button
+                                onClick={() => postNewAnimal()}
+                                color="primary"
+                            >
                                 Envoyer
                             </Button>
                         </DialogActions>
@@ -210,6 +234,64 @@ const Animals = ({ animals }) => {
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
                                 Fermer
+                            </Button>
+                            {isAdmin() && (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleClickOpen('PUT')}
+                                >
+                                    Editer
+                                </Button>
+                            )}
+                        </DialogActions>
+                    </>
+                )}
+                {dialogContent === 'PUT' && (
+                    <>
+                        <DialogTitle id="form-dialog-title">
+                            {selectedAnimal.name}
+                        </DialogTitle>
+                        <DialogContent className={classes.dialogContent}>
+                            <TextField
+                                margin="dense"
+                                label="Nom"
+                                value={newAnimal.name}
+                                onChange={(event) => onChange('name', event)}
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Race"
+                                value={newAnimal.race}
+                                onChange={(event) => onChange('race', event)}
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Poids"
+                                value={newAnimal.weight}
+                                onChange={(event) =>
+                                    onChange('weight', event, 'number')
+                                }
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Age"
+                                value={newAnimal.age}
+                                onChange={(event) =>
+                                    onChange('age', event, 'number')
+                                }
+                            />
+                            <h4>Type: {selectedAnimal.type}</h4>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose} color="primary">
+                                Annuler
+                            </Button>
+                            <Button
+                                onClick={() => updateAnimal()}
+                                color="primary"
+                            >
+                                Modifier
                             </Button>
                         </DialogActions>
                     </>

@@ -9,6 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import { getLink } from '../functions/useApi';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { isAdmin, post } from '../functions/useApi';
 
 const useStyles = makeStyles(() => ({
     articleContainer: {
@@ -44,6 +45,7 @@ const Articles = ({ articles }) => {
     const [open, setOpen] = React.useState(false);
     const [dialogContent, setDialogContent] = React.useState(false);
     const [selectedArticle, setSelectedArticle] = React.useState(false);
+    const [newArticle, setNewArticle] = React.useState(null);
 
     const handleClickOpen = (type) => {
         setDialogContent(type);
@@ -54,22 +56,44 @@ const Articles = ({ articles }) => {
         setOpen(false);
     };
 
-    const openArticle = async(item) => {
+    const openArticle = async (item) => {
         const res = await getLink(`${item.link}`);
-        console.log(res)
+        console.log(res);
         setSelectedArticle(res.data.data.article);
-        handleClickOpen('GET')
-    }
+        handleClickOpen('GET');
+    };
+
+    const onChange = (inputName, event) => {
+            setNewArticle({
+                ...newArticle,
+                [inputName]: event.target.value,
+            });
+    };
+
+    const postNewArticle = async () => {
+        console.log(newArticle);
+        const res = await post('articles/create', newArticle);
+        console.log(res);
+
+        if (res.status === 201) {
+            handleClose();
+        } else {
+            alert(res.data.message);
+        }
+    };
 
     return (
         <div className={classes.container}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleClickOpen('POST')}
-            >
-                Ajouter un article
-            </Button>
+            {/* {isAdmin() && ( */}
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleClickOpen('POST')}
+                >
+                    Ajouter un article
+                </Button>
+             {/* )} */}
+
             <div className={classes.listContainer}>
                 {Object.keys(articles).map(
                     (item, key) =>
@@ -101,17 +125,20 @@ const Articles = ({ articles }) => {
                                 id="name"
                                 label="Titre"
                                 fullWidth
+                                onChange={(event) => onChange('title', event)}
                             />
                             <TextField
                                 margin="dense"
                                 id="name"
-                                label="Sous-titre"
                                 fullWidth
+                                label="Sous-titre"
+                                onChange={(event) => onChange('subtitle', event)}
                             />
                             <TextareaAutosize
                                 aria-label="minimum height"
                                 rowsMin={10}
                                 placeholder="Contenu de l'article"
+                                onChange={(event) => onChange('content', event)}
                                 className={classes.contentField}
                             />
                         </DialogContent>
@@ -119,7 +146,7 @@ const Articles = ({ articles }) => {
                             <Button onClick={handleClose} color="primary">
                                 Annuler
                             </Button>
-                            <Button onClick={handleClose} color="primary">
+                            <Button onClick={postNewArticle} color="primary">
                                 Envoyer
                             </Button>
                         </DialogActions>
@@ -130,7 +157,7 @@ const Articles = ({ articles }) => {
                         <DialogTitle id="form-dialog-title">
                             {selectedArticle.title}
                         </DialogTitle>
-                        <DialogContent style={{textAlign: 'center'}}>
+                        <DialogContent style={{ textAlign: 'center' }}>
                             <h4>{selectedArticle.subtitle}</h4>
                             <p>{selectedArticle.content}</p>
                         </DialogContent>

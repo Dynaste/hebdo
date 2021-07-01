@@ -20,6 +20,18 @@ const headers = {
     
 };
 
+export const isAdmin = () => {
+    const retrievedObject = localStorage.getItem('token');
+    const parsedObj = JSON.parse(retrievedObject);
+
+    if(parsedObj.role === 'admin'){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 export const isTokenValid = () => {
     const retrievedObject = localStorage.getItem('token');
     if (retrievedObject) {
@@ -54,6 +66,16 @@ export const post = async (path, body) => {
     return res;
 };
 
+export const put = async (path, body) => {
+    console.log(`${process.env.REACT_APP_END_POINT}${path}`)
+    const res = await axios.put(
+        `${process.env.REACT_APP_END_POINT}${path}`,
+        body,
+        headers
+    );
+    return res;
+};
+
 export const getLink = async (path) => {
     const res = await axios.get(
         `${path}`,
@@ -69,8 +91,10 @@ export const logUser = async (body) => {
             body,
             headers
         );
+        console.log(res)
         const storage = {
-            token: res.data.data,
+            token: res.data.data.token,
+            role: res.data.data.role,
             timestamp: Math.floor(Date.now() / 1000),
         };
         await localStorage.setItem('token', JSON.stringify(storage));
