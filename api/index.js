@@ -3,10 +3,29 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const options = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'API',
+        version: '1.0.0',
+      },
+    },
+    apis: ['./routes/*.js'], // files containing annotations as above
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+const setupOptions = {
+    explorerUrl: true
+}
 
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, setupOptions));
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -35,4 +54,5 @@ userRoutes(app);
 // articleRoutes(app);
 
 
+process.setMaxListeners(0);
 app.listen(port, hostname);

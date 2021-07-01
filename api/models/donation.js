@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
-const donSchema = new Schema({
+const donationSchema = new Schema({
     date: {
         type: String,
         required: true,
@@ -15,6 +15,6 @@ const donSchema = new Schema({
     },
 })
 
-donSchema.plugin(uniqueValidator, { message: "Error, expected \"{PATH}\" ({VALUE}) to be unique "});
+donationSchema.plugin(uniqueValidator, { message: "Error, expected \"{PATH}\" ({VALUE}) to be unique "});
 
-module.exports = mongoose.model("Don", donSchema);
+module.exports = mongoose.model("Donation", donationSchema);
