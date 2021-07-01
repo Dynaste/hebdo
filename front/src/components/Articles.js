@@ -155,7 +155,7 @@ const Articles = ({ articles, setReload, reload }) => {
                             {selectedArticle.title}
                         </DialogTitle>
                         <DialogContent style={{ textAlign: 'center' }}>
-                            <h4>{selectedArticle.subtitle}</h4>
+                            <h4>Sous-titre: {selectedArticle.subtitle}</h4>
                             <p>{selectedArticle.content}</p>
                         </DialogContent>
                         <DialogActions>

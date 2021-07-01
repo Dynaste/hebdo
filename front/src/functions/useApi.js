@@ -58,8 +58,6 @@ export const get = async (path) => {
 };
 
 export const post = async (path, body) => {
-    console.log(`${process.env.REACT_APP_END_POINT}${path}`);
-    console.log(headers)
     const res = await axios.post(
         `${process.env.REACT_APP_END_POINT}${path}`,
         body,
@@ -69,7 +67,6 @@ export const post = async (path, body) => {
 };
 
 export const put = async (path, body) => {
-    console.log(`${process.env.REACT_APP_END_POINT}${path}`)
     const res = await axios.put(
         `${process.env.REACT_APP_END_POINT}${path}`,
         body,
@@ -101,7 +98,6 @@ export const logUser = async (body) => {
             body,
             headers
         );
-        console.log(res)
         const storage = {
             token: res.data.data.token,
             role: res.data.data.role,
