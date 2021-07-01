@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "ec72221f-7549-4cf0-a30f-e2cb955f8579",
+		"name": "Ipssi_API_hebdo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "USERS",
+			"item": [
+				{
+					"name": "get all users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@gmail.com\",\n\t\"role\": \"admin\",\n\t\"password\": \"root\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/users",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get one user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:4000/users/60dc1f8e42c58a62201ef68e",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "4000",
+							"path": [
+								"users",
+								"60dc1f8e42c58a62201ef68e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@gmail.com\",\n\t\"role\": \"admin\",\n\t\"password\": \"root\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/users/create",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"users",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@gmail.com\",\n\t\"password\": \"root\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:4000/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "4000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ARTICLES",
+			"item": [
+				{
+					"name": "get all articles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create article",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "article 6",
+									"type": "text"
+								},
+								{
+									"key": "subtitle",
+									"value": "sous titre",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "blabla",
+									"type": "text"
+								},
+								{
+									"key": "author",
+									"value": "60dc2b31c556e4780d454042",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/articles",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get article by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:4000/articles/60dc82f5924e8b73bdda6564",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								"60dc82f5924e8b73bdda6564"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete article",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "new article",
+									"type": "text"
+								},
+								{
+									"key": "subtitle",
+									"value": "sous titre",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "blabla",
+									"type": "text"
+								},
+								{
+									"key": "author",
+									"value": "60dc2b31c556e4780d454042",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/articles/60dd8470ad74a64195c82e39",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								"60dd8470ad74a64195c82e39"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update article",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "new article  2 updated",
+									"type": "text"
+								},
+								{
+									"key": "subtitle",
+									"value": "sous titre",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "blabla",
+									"type": "text"
+								},
+								{
+									"key": "author",
+									"value": "60dc2b31c556e4780d454042",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:4000/articles/60dcd672175eef1a7aff7882",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"articles",
+								"60dcd672175eef1a7aff7882"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

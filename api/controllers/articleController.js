@@ -1,149 +1,219 @@
-const Article = require('../models/articles');
-const {port, baseUrl: hostname} = require('./../config');
+const Article = require('../models/article');
+
+const { port, baseUrl: hostname } = require('./../config');
+
+const { json_response } = require('../utils/utils');
+
 
 exports.get_all_articles = (req, res) => {
     let statusCode = 200;
-    //const articles = Article.find({});
-    try {
-        Article.find({}, (err, articles) => {
-            if(err){
+    Article.find({})
+        // .populate("user")
+        .exec((err, articles) => {
+            if (err) {
                 statusCode = 500;
-                throw 'Server internal error. ';
-            }
-            else{
-                const articleList = [];
+                throw 'Server internal error.';
+            } else {
+                const articlesList = [];
                 articles.forEach((article) => {
-                    const newObjArticle = {
+                    const newObjarticle = {
                         _id: article._id,
                         title: article.title,
                         author: article.author,
                         link: `http://${hostname}:${port}/articles/${article._id}`,
                     };
-                    articleList.push({ ...newObjArticle})
+                    articlesList.push({ ...newObjarticle });
                 });
 
                 const obj = {
-                    ...articleList,
+                    ...articlesList,
                     _options: {
                         create: {
                             method: 'POST',
-                            link: `http://${baseUrl}/articles/${article._id}/create`
+                            link: `http://${hostname}:${port}/articles/create`,
+                            properties: {
+                                title: 'String',
+                                author: 'String',
+                            },
                         },
                     },
-                },
+                };
+                json_response(
+                    req,
+                    res,
+                    statusCode,
+                    'GET',
+                    {
+                        type: 'get_many',
+                        objName: 'article',
+                        value: articlesList.length,
+                    },
+                    obj
+                );
             }
-        })
-        
-    } catch (error) {
-        return res.send.json({
-            statusCode,
-            requestMethod: 'GET',
-            articles,
-    
-        })
-        
-    }
-}
-
+        });
+};
 exports.get_one_article = (req, res) => {
     let statusCode = 202;
-    const articleId = req.params.id;
-    try {
-        const article = Article.findOne({_id: articleId});
-        if(!article){
-            statusCode = 400;
-            return res.send.json({
-                statusCode,
-                requestMethod: 'GET',
-                message: "Article not found"
-            })  
+    const id = req.params.articleId;
+    Article.findById(id, '-__v', (error, article) => {
+        if (error) {
+            statusCode = 500;
+            return res.status(statusCode).json({
+                message: 'Internal server error',
+            });
         }
-        return res.status(statusCode)
-        .json({
-            statusCode,
-            method: 'GET',
+        if (!article) {
+            statusCode = 404;
+            return res
+                .status(statusCode)
+                .json({ message: 'Article not found' });
+        }
+        const data = {
             article,
             _options: {
                 create: {
                     method: 'POST',
-                    link: `http://${baseUrl}/articles/${article._id}/create`
+                    link: `http://${hostname}:${port}/articles/create`,
+                    properties: {
+                        title: 'String',
+                        content: 'String',
+                        author: 'String',
+                    },
                 },
                 update: {
                     method: 'PUT',
-                    link: `http://${baseUrl}/articles/${article._id}/update`
+                    link: `http://${hostname}:${port}/articles/${article._id}/update`,
+                    properties: {
+                        title: 'String',
+                        content: 'String',
+                        author: 'String',
+                    },
                 },
                 delete: {
                     method: 'DELETE',
-                    link: `http://${baseUrl}/articles/${article._id}/delete`
+                    link: `http://${hostname}:${port}/articles/${article._id}/delete`,
                 },
-            }
-        })
+            },
+        };
+        json_response(
+            req,
+            res,
+            statusCode,
+            'GET',
+            {
+                type: 'get_one',
+                objName: 'Article',
+            },
+            data
+        );
+    });
+};
+
+exports.create_an_article = (req, res) => {
+    let statusCode = 202;
+    let new_article = new Article({ ...req.body });
+    new_article.save((error, article,) => {
+        if (error) {
+            statusCode = 500;
+            return res.status(statusCode).json({
+                message: 'Server internal error',
+            });
+        } else {
+            json_response(
+                req, res, statusCode, 'POST', {type: 'success_create', objName: article.title}, new_article
+            );
+        }
+    });
+};
+
+exports.update_an_article = async (req, res) => {
+    const id = req.params.articleId;
+    const updateArticle = req.body;
+    let statusCode = 202;
+
+    try {
+        const isExistArticle = await Article.findById(id);
+        if (!isExistArticle) {
+            statusCode = 404;
+            return res
+                .status(statusCode)
+                .send({ message: 'Article not found' });
+        } else {
+            const article = await Article.findOneAndUpdate(
+                { _id: id },
+                { $set: updateArticle },
+                { new: true }
+            );
+            const data = {
+                updateArticle,
+                _options: {
+                    create: {
+                        method: 'POST',
+                        link: `http://${hostname}:${port}/articles/create`,
+                        properties: {
+                            title: 'String',
+                            content: 'String',
+                            author: 'String',
+                        },
+                    },
+                    update: {
+                        method: 'PUT',
+                        link: `http://${hostname}:${port}/articles/${article._id}/update`,
+                        properties: {
+                            title: 'String',
+                            content: 'String',
+                            author: 'String',
+                        },
+                    },
+                    delete: {
+                        method: 'DELETE',
+                        link: `http://${hostname}:${port}/articles/${article._id}/delete`,
+                    },
+                },
+            };
+            json_response(req, res, statusCode, 'UPDATE', {type: 'update', objName: article.title}, article
+            );
+        }
+    } catch (error) {
+        statusCode = 500;
+        console.error(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;', error);
+        return res
+            .status(statusCode)
+            .send({ message: 'Internal server error' });
+    }
+};
+
+exports.delete_an_article = async (req, res) => {
+    statusCode = 201;
+    const id = req.params.articleId;
+    try {
+        const isExistarticle = await Article.findById(id);
+        const data = {
+            isExistarticle,
+            _options: {
+                create: {
+                    method: 'POST',
+                    link: `http://${hostname}:${port}/articles/create`,
+                    properties: {
+                        title: 'String',
+                        content: 'String',
+                        author: 'String',
+                    },
+                },
+            },
+        };
+        if (!isExistarticle) {
+            statusCode = 404;
+            return res.status(statusCode).send({ message: 'Article not found' });
+        }
+
+        await Article.findByIdAndDelete(id);
+        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete', objName: 'Article' , value: isExistarticle.title }, isExistarticle)
 
     } catch (error) {
         statusCode = 500;
-        console.log(error);
-        return res.status(statusCode).send({message: "Internal server error"})
+        console.error(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;', error);
+        return res.status(statusCode).send({ message: 'Internal server error' });
     }
-}
-
-exports.create_an_article = (res, res) =>{
-    let statusCode = 202;
-    let new_article = new Article({...req.body});
-    new_article.save((error, article)=>{
-        if(error) {
-            statusCode = 500
-            return res.status(statusCode).json({
-                message: "Server internal error"
-            })
-        } else{
-            return res.status(201).json({
-                message: `Article created: ${article.title}`,
-                article: new_article,
-                statusCode,
-                requestMethod: 'POST'
-                
-            })
-        }
-    })
-}
-
-exports.update_an_article = (res, res) =>{
-    let statusCode = 202;
-    const id = req.params.articleId;
-    const data = req.body;
-    try {
-        isExistArticle = Article.findById(id);
-
-        if(!isExistArticle){
-            statusCode = 404
-            return res.status(statusCode).send({ message: "Article not found"})
-        }
-
-        const article = Article.findOneAndUpdate({_id: id}, {$set: data}, {new: true});
-
-        return res.send({message: "Article updated", article, statusCode, requestMethod: 'PUT'})
-
-    } catch (error) {
-        statusCode = 500,
-        res.status(statusCode).send({ message: "Internal server error"})
-        
-    }
-}
-
-exports.delete_an_article = (res, res) =>{
-    let statusCode = 202;
-    const id = req.params.articleId;
-    Article.findById(id,(error,docs) =>{
-        if(error){
-            statusCode = 500
-            return res.status(statusCode).json({message: "Internal server error"})
-        }
-        if(!docs) {
-            statusCode = 404
-            return res.status(statusCode).json({message: "Article not found"})
-        }
-        return res.send.json({docs, message: 'Article deleted', statusCode, requestMethod: 'DELETE',                    link: `http://${baseUrl}/article/${article._id}/delete`
-        //link: "http://${baseUrl}/article/${article._id}/delete"
-    })
-    })
-}
+};

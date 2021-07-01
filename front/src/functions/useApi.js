@@ -42,6 +42,14 @@ export const get = async (path) => {
     return res;
 };
 
+export const getLink = async (path) => {
+    const res = await axios.get(
+        `${path}`,
+        headers
+    );
+    return res;
+};
+
 export const logUser = async (body) => {
     try {
         const res = await axios.post(
@@ -62,12 +70,15 @@ export const logUser = async (body) => {
 
 export const signUser = async (body) => {
     try {
-        const res = await axios.post(
+        const sign = await axios.post(
             `${process.env.REACT_APP_END_POINT}users/create`,
             body,
             headers
         );
-        return res;
+        if(sign.status === 201){
+            const res = await logUser(body);
+            return res;
+        }
     } catch (err) {
         return err;
     }

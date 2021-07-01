@@ -1,5 +1,5 @@
 import React from 'react';
-import { signUser } from './../functions/useApi';
+import { signUser, isTokenValid } from './../functions/useApi';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -24,9 +24,9 @@ const useStyles = makeStyles((theme) => ({
         margin: 5,
         color: '#1F85DE',
         '&:hover': {
-            cursor: 'pointer'
-        }
-    }
+            cursor: 'pointer',
+        },
+    },
 }));
 
 const Signup = () => {
@@ -35,12 +35,14 @@ const Signup = () => {
 
     const [myForm, setMyForm] = React.useState({
         email: '',
-        password: ''
+        password: '',
+        role: 'user',
     });
     const [confirmPwd, setConfirmPwd] = React.useState(null);
     const enabled =
-          myForm.email.length >= 4 &&
-          myForm.password.length >= 4;
+        myForm.email.length >= 4 &&
+        myForm.password.length >= 4 &&
+        confirmPwd === myForm.password;
 
     const handleClick = () => {
         history.push('/login');
@@ -54,16 +56,18 @@ const Signup = () => {
     };
 
     const verifPwd = (event) => {
-        setConfirmPwd(event.target.value)
-    }
+        setConfirmPwd(event.target.value);
+    };
 
     const sign = async () => {
         const res = await signUser(myForm);
         console.log(res);
-        if(res.status === 202){
-            history.push('/login')
+        if (res.status === 202) {
+            history.push('/');
         }
     };
+
+    console.log(isTokenValid());
     return (
         <div className={classes.root}>
             <h2>Page d'inscription</h2>
@@ -85,7 +89,7 @@ const Signup = () => {
             <TextField
                 className={classes.field}
                 required
-                error = {confirmPwd !== myForm.password ? true : false}
+                error={confirmPwd !== myForm.password ? true : false}
                 onChange={(event) => verifPwd(event)}
                 label="Confirm password"
                 type="password"

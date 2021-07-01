@@ -13,12 +13,12 @@ const App = () => {
                 </Route>
             </Switch>
             <Switch>
-                <Route path="/login">
+                <Route exact path="/login">
                     <LoginView />
                 </Route>
             </Switch>
             <Switch>
-                <Route path="/signup">
+                <Route exact path="/signup">
                     <SignupView />
                 </Route>
             </Switch>
