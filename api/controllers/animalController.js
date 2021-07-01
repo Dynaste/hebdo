@@ -32,15 +32,15 @@ exports.get_all_animals = (req, res) => {
                             _options: {
                                 create: {
                                     method: 'POST',
-                                    link: `http://${hostname}:${port}/animal/${animal._id}/create`
+                                    link: `http://${hostname}:${port}/animals/${animal._id}/create`
                                 },
                                 update: {
                                     method: 'PUT',
-                                    link: `http://${hostname}:${port}/animal/${animal._id}/update`
+                                    link: `http://${hostname}:${port}/animals/${animal._id}/update`
                                 },
                                 delete: {
                                     method: 'DELETE',
-                                    link: `http://${hostname}:${port}/animal/${animal._id}/delete`
+                                    link: `http://${hostname}:${port}/animals/${animal._id}/delete`
                                 }
                             }
                         }
@@ -80,15 +80,15 @@ exports.get_one_animal = (req, res) => {
                         _options: {
                             create: {
                                 method: 'POST',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/create`
+                                link: `http://${hostname}:${port}/animals/${animal._id}/create`
                             },
                             update: {
                                 method: 'PUT',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/update`
+                                link: `http://${hostname}:${port}/animals/${animal._id}/update`
                             },
                             delete: {
                                 method: 'DELETE',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/delete`
+                                link: `http://${hostname}:${port}/animals/${animal._id}/delete`
                             },
                         }
 
@@ -139,7 +139,7 @@ exports.create_animal = (req, res) => {
                         const data = {
                             ...newAnimal._doc,
                             _options: {
-                                link: `http://${hostname}:${port}/${newAnimal._doc._id}`,
+                                link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}`,
                                 properties: {
                                     type: {
                                         type: 'Enumeration',

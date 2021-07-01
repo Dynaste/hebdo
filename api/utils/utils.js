@@ -120,7 +120,7 @@ exports.get_response_message = (type, objName, value) => {
  * @param {string} identifierName
  * Name of the id property from Req object.
  * @param {function} next
- * Callback for additionnal code.
+ * Callback for additional code.
  * @return {void} Nothing
  */
 exports.check_update = (req, identifierName = null, next) => {
@@ -151,7 +151,7 @@ exports.check_get_one = (req, identifierName = null, next) => {
  * @param properties
  * Properties to match with req.body content.
  * @param next
- * Callback for additionnal code.
+ * Callback for additional code.
  * @return {void} Nothing
  */
 exports.check_create_element = (req, model, next) => {
