@@ -115,7 +115,7 @@ exports.create_animal = (req, res) => {
 
     try {
         check_create_element(req, Animal, async () => {
-            verify_token(req, res, async () => {
+            verify_token(req, res, true, async () => {
                 await Animal.findOne({race, name, type: animalTypes[type], age, weight}, async (err, animal) => {
                     if (err) {
                         statusCode = 500;
@@ -132,6 +132,38 @@ exports.create_animal = (req, res) => {
                             weight,
                             age
                         });
+
+                        const data = {
+                            ...newAnimal._doc,
+                            _options: {
+                                link: `http://${hostname}:${port}/${newAnimal._doc._id}`,
+                                properties: {
+                                    type: {
+                                        type: 'Enumeration',
+                                        data: [
+                                            "Chien",
+                                            "Chat",
+                                            "Cheval",
+                                            "Rat",
+                                            "Lapin",
+                                            "Furet"
+                                        ]
+                                    },
+                                    race: {
+                                        type: 'String'
+                                    },
+                                    name: {
+                                        type: 'String'
+                                    },
+                                    age: {
+                                        type: 'Number'
+                                    },
+                                    weight: {
+                                        type: 'Number'
+                                    }
+                                }
+                            }
+                        }
     
                         newAnimal.save((error) => {
                             if(error) {
@@ -139,7 +171,7 @@ exports.create_animal = (req, res) => {
                                 throw { type: 'error_create' }
                             } else {
                                 statusCode = 201;
-                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'Animal'}, newAnimal);
+                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'Animal'}, data);
                                 return;
                             }
                         })
@@ -160,7 +192,7 @@ exports.update_animal = async (req, res) => {
     try {
         if (animalId) {
             check_update(req, 'animalId', () => {
-                verify_token(req, res, async () => {
+                verify_token(req, res, true, async () => {
                     const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, req.body, {
                         upsert: false,
                         new: true,
@@ -189,7 +221,7 @@ exports.delete_animal = (req, res) => {
 
     try {
         if (animalId) {
-            verify_token(req, res, async () => {
+            verify_token(req, res, true, async () => {
                 Animal.findOneAndDelete({_id: animalId}, (err, animal) => {
                     console.log({animal})
                     if (err) {
