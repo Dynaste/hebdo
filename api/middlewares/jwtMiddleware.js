@@ -30,7 +30,7 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
                     }
                 }
             }).catch(err => {
-                json_response(req, res, statusCode, 'GET', err, null, true);
+                json_response(req, res, statusCode, 'TOKEN', err, null, true);
                 return;
             });
         } else {
@@ -38,7 +38,7 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
             throw {type: 'server_error'};
        }
     } catch (err) {
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, 'TOKEN', err, null, true);
         return;
     }
 }
