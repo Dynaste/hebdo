@@ -4,9 +4,8 @@ const Schema = mongoose.Schema;
 
 const animalSchema = new Schema({
     type: {
-        type: String,
+        type: Number,
         required: true,
-        trim: true
     },
     race: {
        type: String,
