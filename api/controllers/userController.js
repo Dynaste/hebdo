@@ -51,7 +51,7 @@ exports.get_all_users = (req, res) => {
                     res,
                     statusCode,
                     'GET',
-                    {type: 'getMany', objName: 'user', value: usersList.length},
+                    {type: 'get_many', objName: 'user', value: usersList.length},
                     obj
                 );
             }
@@ -107,7 +107,7 @@ exports.get_one_user = (req, res) => {
                         res,
                         statusCode,
                         'GET',
-                        {type: 'getOne', objName: 'User'},
+                        {type: 'get_one', objName: 'User'},
                         data
                     );
                 } else {

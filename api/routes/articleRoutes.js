@@ -7,12 +7,16 @@ module.exports = (server) => {
     server.route('/articles/:articleId').get(articleController.get_one_article);
 
     server
-        .use('/', verify_token)
+        .use('/', (req, res, next) => {
+            verify_token(req, res, true, next);
+        })
         .route('/articles')
         .post(articleController.create_an_article);
 
     server
-        .use('/', verify_token)
+        .use('/', (req, res, next) => {
+            verify_token(req, res, true, next);
+        })
         .route('/articles/:articleId')
         .put(articleController.update_an_article)
         .delete(articleController.delete_an_article);
