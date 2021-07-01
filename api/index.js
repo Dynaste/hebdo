@@ -36,7 +36,6 @@ mongoose.set('useCreateIndex', true);
 
 const {port, baseUrl: hostname} = require('./config');
 const {DB_USERNAME, DB_PASSWORD, DB_TABLE} = process.env;
-console.log('!!!!!!!!!!',DB_USERNAME)
 // const dbUrl = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@cluster0.5yp3u.mongodb.net/${DB_TABLE}?retryWrites=true&w=majority`;
 const dbUrl = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@cluster0-shard-00-00.5yp3u.mongodb.net:27017,cluster0-shard-00-01.5yp3u.mongodb.net:27017,cluster0-shard-00-02.5yp3u.mongodb.net:27017/${DB_TABLE}?ssl=true&replicaSet=atlas-k3o6xi-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
@@ -56,6 +55,8 @@ const userRoutes = require('./routes/userRoutes');
 userRoutes(app);
 const articleRoutes = require('./routes/articleRoutes');
 articleRoutes(app);
+const donationsRoutes = require('./routes/donationRoutes');
+donationsRoutes(app);
 
 process.setMaxListeners(0);
 app.listen(port, hostname);

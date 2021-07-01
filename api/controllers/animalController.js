@@ -1,8 +1,6 @@
 require('dotenv').config();
 const Animal = require('../models/animal');
 const {port, baseUrl: hostname} = require('../config');
-const jwt = require('jsonwebtoken');
-const JWT_TOKEN = process.env.JWT_TOKEN;
 const {verify_token} = require('../middlewares/jwtMiddleware');
 const {
     json_response,
