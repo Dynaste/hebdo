@@ -10,7 +10,7 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
     try {
         if (typeof token !== 'undefined') {
             jwt.verify(token, JWT_TOKEN, async (err, payload) => {
-                console.log({payload})
+                console.log({req})
                 console.log({adminOnly})
                 console.log('secret token', JWT_TOKEN);
                 if (err) {
@@ -30,7 +30,7 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
                     }
                 }
             }).catch(err => {
-                json_response(req, res, statusCode, 'TOKEN', err, null, true);
+                json_response(req, res, statusCode, req.method, err, null, true);
                 return;
             });
         } else {
@@ -38,7 +38,7 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
             throw {type: 'server_error'};
        }
     } catch (err) {
-        json_response(req, res, statusCode, 'TOKEN', err, null, true);
+        json_response(req, res, statusCode, req.method, err, null, true);
         return;
     }
 }
