@@ -76,7 +76,7 @@ exports.get_one_user = (req, res) => {
                     console.log('User exist');
                     console.log({ user });
                     const data = {
-                        user,
+                        ...user._doc,
                         _options: {
                             create: {
                                 method: 'POST',
@@ -129,69 +129,71 @@ exports.update_one_user = (req, res) => {
 
     try {
         check_update(req, 'userId', () => {
-            User.findOne({ _id: req.params.userId }, async (err, user) => {
-                if (err) {
-                    statusCode = 500;
-                    throw {type: 'server_error'};
-                } else if (user) {
-                    console.log({ user });
-                    const updatedUser = {
-                        _id: user._id,
-                        email: req.body?.email ?? user.email,
-                        password: req.body?.password ?? user.password,
-                        role: req.body?.role ?? user.role,
-                    };
-                    console.log({ updatedUser });
-                    await User.replaceOne(
-                        { _id: req.params.userId },
-                        { ...updatedUser }
-                    );
+            verify_token(req, res, false, async () => {
+                User.findOne({ _id: req.params.userId }, async (err, user) => {
+                    if (err) {
+                        statusCode = 500;
+                        throw {type: 'server_error'};
+                    } else if (user) {
+                        console.log({ user });
+                        const updatedUser = {
+                            _id: user._id,
+                            email: req.body?.email ?? user.email,
+                            password: req.body?.password ?? user.password,
+                            role: req.body?.role ?? user.role,
+                        };
+                        console.log({ updatedUser });
+                        await User.replaceOne(
+                            { _id: req.params.userId },
+                            { ...updatedUser }
+                        );
 
-                    const data = {
-                        beforeUpdate: {
-                            user,
-                        },
-                        afterUpdate: {
-                            updatedUser,
-                        },
-                        _options: {
-                            create: {
-                                method: 'POST',
-                                link: `http://${hostname}:${port}/users/create`,
-                                properties: {
-                                    email: 'String',
-                                    password: 'String',
-                                    role: 'String',
+                        const data = {
+                            beforeUpdate: {
+                                user,
+                            },
+                            afterUpdate: {
+                                updatedUser,
+                            },
+                            _options: {
+                                create: {
+                                    method: 'POST',
+                                    link: `http://${hostname}:${port}/users/create`,
+                                    properties: {
+                                        email: 'String',
+                                        password: 'String',
+                                        role: 'String',
+                                    },
+                                },
+                                update: {
+                                    method: 'PUT',
+                                    link: `http://${hostname}:${port}/users/${user._id}/update`,
+                                    properties: {
+                                        email: 'String',
+                                        password: 'String',
+                                        role: 'String',
+                                    },
+                                },
+                                delete: {
+                                    method: 'DELETE',
+                                    link: `http://${hostname}:${port}/users/${user._id}/delete`,
                                 },
                             },
-                            update: {
-                                method: 'PUT',
-                                link: `http://${hostname}:${port}/users/${user._id}/update`,
-                                properties: {
-                                    email: 'String',
-                                    password: 'String',
-                                    role: 'String',
-                                },
-                            },
-                            delete: {
-                                method: 'DELETE',
-                                link: `http://${hostname}:${port}/users/${user._id}/delete`,
-                            },
-                        },
-                    };
+                        };
 
-                    json_response(
-                        req,
-                        res,
-                        statusCode,
-                        'PUT',
-                        {type: 'update'},
-                        data
-                    );
-                } else {
-                    statusCode = 404;
-                    throw {type: 'not_found', objName: 'User'};
-                }
+                        json_response(
+                            req,
+                            res,
+                            statusCode,
+                            'PUT',
+                            {type: 'update'},
+                            data
+                        );
+                    } else {
+                        statusCode = 404;
+                        throw {type: 'not_found', objName: 'User'};
+                    }
+                });
             });
         });
     } catch (err) {
@@ -206,7 +208,7 @@ exports.delete_one_user = (req, res) => {
 
     try {
         if (userId) {
-            verify_token(req, res, () => {
+            verify_token(req, res, true, () => {
                 User.findOneAndDelete({_id: userId}, (err, user) => {
                     if (err) {
                         statusCode = 500;
@@ -276,13 +278,14 @@ exports.signup = async (req, res) => {
     let statusCode = 201;
     const { role, email, password } = req.body;
     try {
-        check_create_element(req, () => {
+        check_create_element(req, User, () => {
             if (password === '' || password === null) {
-                throw 'You have to set a password';
+                throw {type: 'password_required'}
             } else {
                 User.findOne({ email }, async (err, user) => {
                     if (err) {
-                        throw err;
+                        console.log({err});
+                        throw {type: 'server_error'};
                     } else {
                         const newUser = await new User({
                             role,
@@ -292,7 +295,7 @@ exports.signup = async (req, res) => {
                             boughtProducts: []
                         });
 
-                        await newUser.save((error, data) => {
+                        await newUser.save((error, cUser) => {
                             console.log(req.body);
                             if (error) {
                                 console.log('[Error: 500]');
@@ -300,26 +303,28 @@ exports.signup = async (req, res) => {
                                 json_response(req, res, statusCode, 'POST', {type: 'server_error'}, null);
                             } else {
                                 console.log('User has been saved');
-                                const createdUser = { ...data._doc };
+                                const createdUser = { ...cUser._doc };
                                 delete createdUser.password;
-                                res.status(statusCode).json({
-                                    statusCode,
-                                    method: 'POST',
-                                    message: 'User successfully created',
-                                    data: {
-                                        ...createdUser,
-                                        _options: {
-                                            login: {
-                                                method: 'POST',
-                                                link: `http://${hostname}:${port}/login`,
-                                                properties: {
-                                                    email: 'String',
-                                                    password: 'String',
+
+                                const data = {
+                                    ...createdUser,
+                                    _options: {
+                                        login: {
+                                            method: 'POST',
+                                            link: `http://${hostname}:${port}/login`,
+                                            properties: {
+                                                email: {
+                                                    type: 'String',
                                                 },
+                                                password: {
+                                                    type: 'String'
+                                                }
                                             },
                                         },
                                     },
-                                });
+                                }
+                                
+                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'User'}, data);
                             }
                         });
                     }
@@ -328,7 +333,7 @@ exports.signup = async (req, res) => {
         })
     } catch (err) {
         statusCode = 500;
-        console.log('[Error]');
+        console.log({err});
         json_response(req, res, statusCode, 'POST', err, null, true);
     }
 };
