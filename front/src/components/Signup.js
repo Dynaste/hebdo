@@ -35,12 +35,14 @@ const Signup = () => {
 
     const [myForm, setMyForm] = React.useState({
         email: '',
-        password: ''
+        password: '',
+        role: 'user'
     });
     const [confirmPwd, setConfirmPwd] = React.useState(null);
     const enabled =
           myForm.email.length >= 4 &&
-          myForm.password.length >= 4;
+          myForm.password.length >= 4 &&
+          confirmPwd === myForm.password;
 
     const handleClick = () => {
         history.push('/login');
@@ -61,7 +63,7 @@ const Signup = () => {
         const res = await signUser(myForm);
         console.log(res);
         if(res.status === 202){
-            history.push('/login')
+            history.push('/')
         }
     };
     return (
