@@ -9,7 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import { getLink } from '../functions/useApi';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { isAdmin, post } from '../functions/useApi';
+import { post } from '../functions/useApi';
 
 const useStyles = makeStyles(() => ({
     articleContainer: {
@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const Articles = ({ articles }) => {
+const Articles = ({ articles, setReload, reload }) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [dialogContent, setDialogContent] = React.useState(false);
@@ -76,6 +76,7 @@ const Articles = ({ articles }) => {
         console.log(res);
 
         if (res.status === 201) {
+            setReload(!reload);
             handleClose();
         } else {
             alert(res.data.message);
@@ -84,7 +85,6 @@ const Articles = ({ articles }) => {
 
     return (
         <div className={classes.container}>
-            {/* {isAdmin() && ( */}
                 <Button
                     variant="contained"
                     color="primary"
@@ -92,7 +92,6 @@ const Articles = ({ articles }) => {
                 >
                     Ajouter un article
                 </Button>
-             {/* )} */}
 
             <div className={classes.listContainer}>
                 {Object.keys(articles).map(
@@ -122,14 +121,12 @@ const Articles = ({ articles }) => {
                         <DialogContent>
                             <TextField
                                 margin="dense"
-                                id="name"
                                 label="Titre"
                                 fullWidth
                                 onChange={(event) => onChange('title', event)}
                             />
                             <TextField
                                 margin="dense"
-                                id="name"
                                 fullWidth
                                 label="Sous-titre"
                                 onChange={(event) => onChange('subtitle', event)}
@@ -154,7 +151,7 @@ const Articles = ({ articles }) => {
                 )}
                 {dialogContent === 'GET' && (
                     <>
-                        <DialogTitle id="form-dialog-title">
+                        <DialogTitle>
                             {selectedArticle.title}
                         </DialogTitle>
                         <DialogContent style={{ textAlign: 'center' }}>

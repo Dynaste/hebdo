@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const Animals = ({ animals }) => {
+const Animals = ({ animals, setReload, reload }) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [dialogContent, setDialogContent] = React.useState(false);
@@ -71,12 +71,12 @@ const Animals = ({ animals }) => {
     };
 
     const typeChoice = [
-        { value: 1, label: 'Chien' },
-        { value: 2, label: 'Chat' },
-        { value: 3, label: 'Cheval' },
-        { value: 4, label: 'Rat' },
-        { value: 5, label: 'Lapin' },
-        { value: 6, label: 'Furet' },
+        { value: 0, label: 'Chien' },
+        { value: 1, label: 'Chat' },
+        { value: 2, label: 'Cheval' },
+        { value: 3, label: 'Rat' },
+        { value: 4, label: 'Lapin' },
+        { value: 5, label: 'Furet' },
     ];
 
     const openAnimal = async (item) => {
@@ -105,7 +105,10 @@ const Animals = ({ animals }) => {
 
         if (res.status === 201) {
             handleClose();
-            setNewAnimal(null);
+            setNewAnimal({
+                type: 1,
+            });
+            setReload(!reload);
         } else {
             alert(res.data.message);
         }
@@ -118,7 +121,10 @@ const Animals = ({ animals }) => {
 
         if (res.status === 201) {
             handleClose();
-            setNewAnimal(null);
+            setNewAnimal({
+                type: 1,
+            });
+            setReload(!reload);
         } else {
             alert(res.data.message);
         }

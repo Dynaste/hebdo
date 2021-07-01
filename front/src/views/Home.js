@@ -9,7 +9,7 @@ import Tab from '@material-ui/core/Tab';
 
 import Articles from '../components/Articles';
 import Animals from '../components/Animals';
-import Product from '../components/Articles';
+import Products from '../components/Articles';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -69,7 +69,9 @@ const Home = () => {
 
     const [articles, setArticles] = React.useState(null);
     const [animals, setAnimals] = React.useState(null);
+    const [products, setProducts] = React.useState(null);
     const [value, setValue] = React.useState(0);
+    const [reload, setReload] = React.useState(false);
 
     const log = () => {
         localStorage.removeItem('token');
@@ -94,7 +96,7 @@ const Home = () => {
     React.useEffect(() => {
         isTokenValid() && getArticles();
         isTokenValid() && getAnimals();
-    }, []);
+    }, [reload]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -138,21 +140,21 @@ const Home = () => {
                         index={0}
                         className={classes.tabPanelContent}
                     >
-                        {articles && <Articles articles={articles} />}
+                        {articles && <Articles articles={articles} setReload={setReload} reload={reload}/>}
                     </TabPanel>
                     <TabPanel
                         value={value}
                         index={1}
                         className={classes.tabPanelContent}
                     >
-                        {animals && <Animals animals={animals} />}
+                        {animals && <Animals animals={animals} setReload={setReload} reload={reload}/>}
                     </TabPanel>
                     <TabPanel
                         value={value}
                         index={2}
                         className={classes.articleContainer}
                     >
-                        <h2>3</h2>
+                        {products && <Products products={products} setReload={setReload} reload={reload}/>}
                     </TabPanel>
                 </div>
             ) : (
