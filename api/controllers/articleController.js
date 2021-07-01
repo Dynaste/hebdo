@@ -119,6 +119,12 @@ exports.create_an_article = (req, res) => {
         check_create_element(req, Article, async () => {
             verify_token(req, res, false, async (payload) => {
                 console.log({payload});
+
+                if (!payload.userId) {
+                    statusCode = 500;
+                    throw {type: 'server_error'};
+                }
+                
                 const newArticle = await new Article({
                     title,
                     subtitle,
