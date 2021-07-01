@@ -46,10 +46,6 @@ export const get = async (path) => {
 };
 
 export const post = async (path, body) => {
-    console.log({headers});
-    console.log({path});
-    console.log({body});
-
     const res = await axios.post(
         `${process.env.REACT_APP_END_POINT}${path}`,
         body,

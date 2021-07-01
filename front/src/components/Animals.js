@@ -89,10 +89,10 @@ const Animals = ({ animals }) => {
 
     const postNewAnimal = async() => {
         console.log(newAnimal);
-        const res = await post('/animals/create', newAnimal);
+        const res = await post('animals/create', newAnimal);
         console.log(res);
 
-        if(res.statusCode === 201){
+        if(res.status === 201){
             handleClose();
         }
         else{
