@@ -3,8 +3,15 @@ const Animal = require('../models/animal');
 const {port, baseUrl: hostname} = require('../config');
 const jwt = require('jsonwebtoken');
 const JWT_TOKEN = process.env.JWT_TOKEN;
-const verify_token = require('../middlewares/jwtMiddleware');
-const {get_request_path, check_get_one, check_create_element, check_update} = require('../utils/utils');
+const {verify_token} = require('../middlewares/jwtMiddleware');
+const {
+    json_response,
+    check_get_one,
+    check_create_element,
+    check_update,
+    capitalize
+} = require('../utils/utils');
+const { animalTypes } = require('../models/animalTypes');
 
 exports.get_all_animals = (req, res) => {
     let statusCode = 200;
@@ -15,39 +22,41 @@ exports.get_all_animals = (req, res) => {
                 statusCode = 500;
                 throw {type: 'server_error'};
             } else if (animals) {
-                const animalsArr = [];
-                if (animals.length === 0) {
-                    json_response(req, res, statusCode, 'GET', `${animals.length} animal(s) found.`, animalsArr);
+                console.log(animals)
+                let animalsArr = [];
+                if (animals.length > 0) {
+                    
+                    animals.forEach(animal => {
+                        const animalObj = {
+                            ...animal._doc,
+                            link: `http://${hostname}:${port}/${animal._id}`,
+                            /* _options: {
+                                create: {
+                                    method: 'POST',
+                                    link: `http://${hostname}:${port}/animal/${animal._id}/create`
+                                },
+                                update: {
+                                    method: 'PUT',
+                                    link: `http://${hostname}:${port}/animal/${animal._id}/update`
+                                },
+                                delete: {
+                                    method: 'DELETE',
+                                    link: `http://${hostname}:${port}/animal/${animal._id}/delete`
+                                }
+                            } */
+                        }
+
+                        animalsArr .push({...animalObj});
+                    });
                 }
-
-                animals.foreach(animal => {
-                    const animalObj = {
-                        ...animal,
-                        link: `http://${hostname}:${port}/${animal._id}`,
-                        /* _options: {
-                            create: {
-                                method: 'POST',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/create`
-                            },
-                            update: {
-                                method: 'PUT',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/update`
-                            },
-                            delete: {
-                                method: 'DELETE',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/delete`
-                            }
-                        } */
-                    }
-
-                    animalsArr.push({...animalObj});
-                });
-                json_response(req, res, statusCode, 'GET', `${animals.length} animal(s) found.`, animalsArr);
+                json_response(req, res, statusCode, 'GET', {type: 'get_many', objName: 'Animal', value: animalsArr.length}, animalsArr );
+                return;
             }
         })
     } catch(err) {
         console.log(err);
         json_response(req, res, statusCode, 'GET', err, null, true);
+        return;
     }
 }
 
@@ -55,16 +64,19 @@ exports.get_one_animal = (req, res) => {
     const {animalId} = req.params;
     let statusCode = 200;
     try {
-        check_get_one(req, 'animalId', () => {
-            Animal.findOne({id: animalId}, (err, animal) => {
+        check_get_one(req, 'animalId', async () => {
+            Animal.findOne({_id: animalId}, (err, animal) => {
+                console.log({animal})
                 if (err) {
                     statusCode = 500;
                     throw {type: 'server_error'};
 
                 } else if (animal) {
 
+                    console.log({animal})
+
                     const objAnimal = {
-                        ...animal,
+                        ...animal._doc,
                         _options: {
                             create: {
                                 method: 'POST',
@@ -82,7 +94,8 @@ exports.get_one_animal = (req, res) => {
 
                     }
                     
-                    json_response(req, res, statusCode, 'GET', `Animal found.`, objAnimal);
+                    json_response(req, res, statusCode, 'GET', {type: 'get_one', objName: 'Animal'}, objAnimal);
+                    return;
                     
                 } else {
                     statusCode = 404;
@@ -92,6 +105,7 @@ exports.get_one_animal = (req, res) => {
         });
     } catch (err) {
         json_response(req, res, statusCode, 'GET', err, null, true);
+        return;
     }
 }
 
@@ -100,26 +114,33 @@ exports.create_animal = (req, res) => {
     let statusCode = 201;
 
     try {
-        check_create_element(req, () => {
-            verify_token(req, res, () => {
-                Animal.findOne({race, name, type, age, weight}, async (err, animal) => {
+        check_create_element(req, Animal, async () => {
+            verify_token(req, res, async () => {
+                await Animal.findOne({race, name, type: animalTypes[type], age, weight}, async (err, animal) => {
                     if (err) {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (animal) {
-                        json_response(req, res, statusCode, 'POST', {type: 'exist'}, null);
+                        json_response(req, res, statusCode, 'POST', {type: 'exist', objName: 'Animal'}, null);
+                        return;
     
                     } else if (!animal) {
                         const newAnimal = await new Animal({
-                            ...req.body
+                            type: animalTypes[type],
+                            race: capitalize(race),
+                            name: capitalize(name),
+                            weight,
+                            age
                         });
     
                         newAnimal.save((error) => {
-                            if(!error) {
+                            if(error) {
                                 statusCode = 500;
-                                json_response(req, res, statusCode, 'POST', {type: 'success_create'}, newAnimal);
+                                throw { type: 'error_create' }
                             } else {
-                                console.log('[Error] - Exception')
+                                statusCode = 201;
+                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'Animal'}, newAnimal);
+                                return;
                             }
                         })
                     }
@@ -128,6 +149,7 @@ exports.create_animal = (req, res) => {
         })
     } catch (err) {
         json_response(req, res, statusCode, 'POST', err, null, true);
+        return;
     }
 }
 
@@ -146,7 +168,8 @@ exports.update_animal = async (req, res) => {
                     })
 
                     if (updatedAnimal) {
-                        json_response(req, res, statusCode, 'PUT', `Animal ${updatedAnimal._id} has been successfully updated.`, updatedAnimal);
+                        json_response(req, res, statusCode, 'PUT', {type: 'success_update', objName: 'Animal', value: updatedAnimal._id}, updatedAnimal);
+                        return;
                     }
                 });
             })
@@ -155,22 +178,30 @@ exports.update_animal = async (req, res) => {
         }
     } catch (err) {
         json_response(req, res, statusCode, 'PUT', err, null, true);
+        return;
     }
 }
 
 exports.delete_animal = (req, res) => {
     let statusCode = 201;
-    const animalId = req.params.animalId;
+    const {animalId} = req.params;
+    console.log('helo')
 
     try {
         if (animalId) {
-            verify_token(req, res, () => {
+            verify_token(req, res, async () => {
                 Animal.findOneAndDelete({_id: animalId}, (err, animal) => {
+                    console.log({animal})
                     if (err) {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (animal) {
-                        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete'}, animal);
+                        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete', objName: 'Animal', value: animal._id}, animal);
+                        return;
+                    } else if (animal === null) {
+                        statusCode = 404;
+                        json_response(req, res, statusCode, 'DELETE', {type: 'not_found', objName: 'Animal'}, null, true);
+                        return;
                     }
                 })
             })
@@ -179,5 +210,6 @@ exports.delete_animal = (req, res) => {
         }
     } catch (err) {
         json_response(req, res, statusCode, 'DELETE', err, null, true);
+        return;
     }
 }

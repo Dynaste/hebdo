@@ -4,8 +4,20 @@ exports.get_request_path = (req) => {
     return `http://${hostname}:${port}${req.url}`;
 }
 
+/**
+ * Generic function to send data from Backend.
+ * @param {object} req Request object.
+ * @param {object} res Response object.
+ * @param {number} statusCode Status code (Ex: 200, 404, 500)
+ * @param {string} method API Method used
+ * @param {object} objMessage Message object to define which message to display
+ * @param {object} data Data sent 
+ * @param {boolean} showRequest Define if the request path has to be displayed
+ * @return {void}
+ */
 exports.json_response = (req, res, statusCode, method, objMessage = {type, objName: null, value: null}, data, showRequest = false) => {
 
+    // console.log({objMessage});
     const {type, objName, value} = objMessage;
     const obj = {
         statusCode,
@@ -14,6 +26,8 @@ exports.json_response = (req, res, statusCode, method, objMessage = {type, objNa
         data,
         request: this.get_request_path(req)
     }
+
+    // console.log({obj});
 
     !showRequest && delete obj.request;
 
@@ -41,9 +55,9 @@ exports.get_response_message = (type, objName, value) => {
             return `Invalid couple Email/Password`;
 
         // GET
-        case 'getOne':
+        case 'get_one':
             return `${objName} found`;
-        case 'getMany':
+        case 'get_many':
             return `${value} ${objName}s found`;
 
         // UPDATE
@@ -51,6 +65,8 @@ exports.get_response_message = (type, objName, value) => {
             return `Update done`;
         case 'update_no_body':
             return `You must at least update one property`;
+        case 'success_update':
+            return `${objName} ${value} has been successfully updated`;
 
         // DELETE
         case 'success_delete':
@@ -61,6 +77,8 @@ exports.get_response_message = (type, objName, value) => {
             return `All fields are required`;
         case 'success_create':
             return `${objName} successfully created`;
+        case 'error_create':
+            return `${objName} hasn't been created`;
 
         // ERROR
         case 'id_required':
@@ -79,6 +97,10 @@ exports.get_response_message = (type, objName, value) => {
             return `This ${objName} already exist`;
         case 'not_exist':
             return `This ${objName} not exist`;
+        case 'forbidden':
+            return `Forbidden access`;
+        case 'unhandled_error':
+            return `Unhandled Error at ${value}`;
         
 
             
@@ -122,16 +144,40 @@ exports.check_get_one = (req, identifierName = null, next) => {
  * Check major cases for get API Method
  * @param req
  * Request object.
+ * @param properties
+ * Properties to match with req.body content.
  * @param next
  * Callback for additionnal code.
  * @return {void} Nothing
  */
-exports.check_create_element = (req, next) => {
-    if (!Object.keys(req.body).map(prop => {
+exports.check_create_element = (req, model, next) => {
+    const modelProperties = {...model.schema.paths};
+    delete modelProperties.__v;
+    delete modelProperties._id;
+
+    const properties = Object.keys(modelProperties);
+
+    const allPropertiesExist = properties.map(prop => {
+        if (!Object.keys(req.body).find(val => val === prop)) {
+            return false;
+        };
+    });
+
+    const valueIsMissing = Object.keys(req.body).map(prop => {
         return (req.body[`${prop}`] === undefined || req.body[`${prop}`] === null || req.body[`${prop}`] === '');
-    }) === false) {
+    }) === false;
+
+    if (!allPropertiesExist.find(val => val === false) && !valueIsMissing) {
         next();
-    }  else {
-        throw 'All fields are required';
+    }  else if (allPropertiesExist.find(val => val === false) || valueIsMissing) {
+        throw {type: 'fields_required'};
+    } else {
+        throw {type: 'unhandled_error', value: 'CheckCreateElement'}
     }
+}
+
+exports.capitalize = (str) => {
+    let firstCharCapitalize = str.charAt(0).toUpperCase();
+    const splicedStr = str.slice(1, str.length).toLowerCase();
+    return firstCharCapitalize + splicedStr;
 }

@@ -14,5 +14,5 @@ module.exports = (server) => {
         .put(animalController.update_animal);
 
     server.route('/animals/:animalId/delete')
-        .put(animalController.delete_animal);
+        .delete(animalController.delete_animal);
 }

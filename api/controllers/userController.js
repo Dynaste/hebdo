@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const JWT_TOKEN = process.env.JWT_TOKEN;
 const { port, baseUrl: hostname } = require('./../config');
 const {
-    get_request_path,
     json_response,
     check_update,
     check_get_one,
@@ -201,7 +200,29 @@ exports.update_one_user = (req, res) => {
     }
 };
 
-exports.delete_one_user = (req, res) => {};
+exports.delete_one_user = (req, res) => {
+    let statusCode = 201;
+    const userId = req.params.userId;
+
+    try {
+        if (userId) {
+            verify_token(req, res, () => {
+                User.findOneAndDelete({_id: userId}, (err, user) => {
+                    if (err) {
+                        statusCode = 500;
+                        throw {type: 'server_error'};
+                    } else if (user) {
+                        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete'}, user);
+                    }
+                })
+            })
+        } else {
+            throw {type: 'id_required'};
+        }
+    } catch (err) {
+        json_response(req, res, statusCode, 'DELETE', err, null, true);
+    }
+};
 
 exports.login = (req, res) => {
     let statusCode = 202;
@@ -215,19 +236,20 @@ exports.login = (req, res) => {
                     statusCode = 401;
                     throw {type: 'email_pwd_couple_error'};
                 } else if (user) {
-                    if ((req.body.password, user.password)) {
+                    if (req.body.password === user.password) {
                         jwt.sign(
                             { email: user.email, role: user.role },
                             JWT_TOKEN,
-                            { expiresIn: '24 hour' },
-                            (err, token) => {
+                            { expiresIn: '24 hours' },
+                            async (err, token) => {
                                 if (err) {
                                     console.log({ err });
                                     statusCode = 500;
                                     throw {type: 'server_error'};
                                 } else if (token) {
                                     console.log('Successfully logged');
-                                    json_response(req, res, statusCode, 'POST', {type: success_login}, {token});
+                                    console.log({token});
+                                    json_response(req, res, statusCode, 'POST', {type: 'success_login'}, token);
                                 } else {
                                     throw {type: 'error_occured'};
                                 }
@@ -255,10 +277,6 @@ exports.signup = async (req, res) => {
     const { role, email, password } = req.body;
     try {
         check_create_element(req, () => {
-            // if (!validator.isEmail(email)) {
-            //     statusCode = 400;
-            //     throw "Email don't have the right format.";
-            // }
             if (password === '' || password === null) {
                 throw 'You have to set a password';
             } else {
@@ -267,9 +285,11 @@ exports.signup = async (req, res) => {
                         throw err;
                     } else {
                         const newUser = await new User({
-                            role: role,
+                            role,
                             email: email.toLowerCase(),
-                            password: password,
+                            password,
+                            adoptedAnimals: [],
+                            boughtProducts: []
                         });
 
                         await newUser.save((error, data) => {
@@ -309,6 +329,7 @@ exports.signup = async (req, res) => {
     } catch (err) {
         statusCode = 500;
         console.log('[Error]');
+        console.log(err)
         json_response(req, res, statusCode, 'POST', err, null, true);
     }
 };
