@@ -29,7 +29,7 @@ exports.get_all_animals = (req, res) => {
                     animals.forEach(animal => {
                         const animalObj = {
                             ...animal._doc,
-                            link: `http://${hostname}:${port}/${animal._id}`,
+                            link: `http://${hostname}:${port}/animals/${animal._id}`,
                             /* _options: {
                                 create: {
                                     method: 'POST',

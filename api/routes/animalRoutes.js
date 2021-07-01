@@ -5,6 +5,7 @@ module.exports = (server) => {
      * @openapi
      * /animals:
      *   get:
+     *     tags: [Animals]
      *     description: Welcome to swagger-jsdoc!
      *     responses:
      *       200:
@@ -17,6 +18,7 @@ module.exports = (server) => {
      * @openapi
      * /animals/create:
      *   post:
+     *     tags: [Animals]
      *     description: Welcome to swagger-jsdoc!
      *     responses:
      *       200:
@@ -29,10 +31,13 @@ module.exports = (server) => {
      * @openapi
      * /animals/{animalId}:
      *   get:
-     *     description: Welcome to swagger-jsdoc!
+     *     tags: [Animals]
+     *     description: Get a specific item in Animal collection
      *     responses:
      *       200:
-     *         description: Returns all animals.
+     *         description: Returns one animal.
+     *       500:
+     *         description: Server internal error.
      */
     server.route('/animals/:animalId')
         .get(animalController.get_one_animal);
@@ -41,6 +46,7 @@ module.exports = (server) => {
      * @openapi
      * /animals/{animalId}/update:
      *   put:
+     *     tags: [Animals]
      *     description: Welcome to swagger-jsdoc!
      *     responses:
      *       200:
@@ -53,6 +59,7 @@ module.exports = (server) => {
      * @openapi
      * /animals/{animalId}/delete:
      *   delete:
+     *     tags: [Animals]
      *     description: Welcome to swagger-jsdoc!
      *     responses:
      *       200:

@@ -3,6 +3,10 @@ const uniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
 const donationSchema = new Schema({
+    userId: {
+        type: String,
+        required: true
+    },
     date: {
         type: String,
         required: true,
