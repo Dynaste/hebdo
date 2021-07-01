@@ -329,6 +329,7 @@ exports.signup = async (req, res) => {
     } catch (err) {
         statusCode = 500;
         console.log('[Error]');
+        console.log(err)
         json_response(req, res, statusCode, 'POST', err, null, true);
     }
 };

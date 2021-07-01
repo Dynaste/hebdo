@@ -59,3 +59,16 @@ export const logUser = async (body) => {
         return err;
     }
 };
+
+export const signUser = async (body) => {
+    try {
+        const res = await axios.post(
+            `${process.env.REACT_APP_END_POINT}users/create`,
+            body,
+            headers
+        );
+        return res;
+    } catch (err) {
+        return err;
+    }
+};
