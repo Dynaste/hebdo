@@ -17,6 +17,30 @@ const userSchema = new Schema({
         type: String,
         required: 'An email is required',
         unique: true
+    },
+    adoptedAnimals: {
+        type: [{
+            idAnimal: {
+                type: String,
+                trim: true
+            },
+            adoptDate: {
+                type: String,
+            }
+        }],
+        required: true
+    },
+    boughtProducts: {
+        type: [{
+            idProduct: {
+                type: String,
+                trim: true
+            },
+            purchaseDate: {
+                type: String,
+            }
+        }],
+        required: true
     }
 })
 

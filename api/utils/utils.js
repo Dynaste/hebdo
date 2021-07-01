@@ -65,6 +65,8 @@ exports.get_response_message = (type, objName, value) => {
             return `Update done`;
         case 'update_no_body':
             return `You must at least update one property`;
+        case 'success_update':
+            return `${objName} ${value} has been successfully updated`;
 
         // DELETE
         case 'success_delete':
@@ -142,25 +144,40 @@ exports.check_get_one = (req, identifierName = null, next) => {
  * Check major cases for get API Method
  * @param req
  * Request object.
+ * @param properties
+ * Properties to match with req.body content.
  * @param next
  * Callback for additionnal code.
  * @return {void} Nothing
  */
-exports.check_create_element = (req, next) => {
+exports.check_create_element = (req, model, next) => {
+    const modelProperties = {...model.schema.paths};
+    delete modelProperties.__v;
+    delete modelProperties._id;
 
-    console.log(req.body)
+    const properties = Object.keys(modelProperties);
+
+    const allPropertiesExist = properties.map(prop => {
+        if (!Object.keys(req.body).find(val => val === prop)) {
+            return false;
+        };
+    });
 
     const valueIsMissing = Object.keys(req.body).map(prop => {
         return (req.body[`${prop}`] === undefined || req.body[`${prop}`] === null || req.body[`${prop}`] === '');
-    });
+    }) === false;
 
-    console.log({valueIsMissing});
-
-    if (!valueIsMissing) {
+    if (!allPropertiesExist.find(val => val === false) && !valueIsMissing) {
         next();
-    }  else if (valueIsMissing) {
+    }  else if (allPropertiesExist.find(val => val === false) || valueIsMissing) {
         throw {type: 'fields_required'};
     } else {
         throw {type: 'unhandled_error', value: 'CheckCreateElement'}
     }
+}
+
+exports.capitalize = (str) => {
+    let firstCharCapitalize = str.charAt(0).toUpperCase();
+    const splicedStr = str.slice(1, str.length).toLowerCase();
+    return firstCharCapitalize + splicedStr;
 }
