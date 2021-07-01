@@ -42,6 +42,14 @@ export const get = async (path) => {
     return res;
 };
 
+export const getLink = async (path) => {
+    const res = await axios.get(
+        `${path}`,
+        headers
+    );
+    return res;
+};
+
 export const logUser = async (body) => {
     try {
         const res = await axios.post(
