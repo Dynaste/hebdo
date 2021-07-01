@@ -44,7 +44,7 @@ exports.get_all_articles = (req, res) => {
                     statusCode,
                     'GET',
                     {
-                        type: 'getMany',
+                        type: 'get_many',
                         objName: 'article',
                         value: articlesList.length,
                     },
@@ -102,8 +102,8 @@ exports.get_one_article = (req, res) => {
             statusCode,
             'GET',
             {
-                type: 'getOne',
-                objName: 'article',
+                type: 'get_one',
+                objName: 'Article',
             },
             data
         );
@@ -113,7 +113,7 @@ exports.get_one_article = (req, res) => {
 exports.create_an_article = (req, res) => {
     let statusCode = 202;
     let new_article = new Article({ ...req.body });
-    new_article.save((error, article) => {
+    new_article.save((error, article,) => {
         if (error) {
             statusCode = 500;
             return res.status(statusCode).json({

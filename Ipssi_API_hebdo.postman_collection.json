@@ -146,7 +146,7 @@
 							"urlencoded": [
 								{
 									"key": "title",
-									"value": "article",
+									"value": "article 6",
 									"type": "text"
 								},
 								{
@@ -181,18 +181,25 @@
 				},
 				{
 					"name": "get article by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
 						"url": {
-							"raw": "localhost:4000/articles/60dc8150695e6c6dc0a92b66",
+							"raw": "localhost:4000/articles/60dc82f5924e8b73bdda6564",
 							"host": [
 								"localhost"
 							],
 							"port": "4000",
 							"path": [
 								"articles",
-								"60dc8150695e6c6dc0a92b66"
+								"60dc82f5924e8b73bdda6564"
 							]
 						}
 					},
@@ -229,14 +236,14 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:4000/articles/60dc8150695e6c6dc0a92b66",
+							"raw": "localhost:4000/articles/60dd8470ad74a64195c82e39",
 							"host": [
 								"localhost"
 							],
 							"port": "4000",
 							"path": [
 								"articles",
-								"60dc8150695e6c6dc0a92b66"
+								"60dd8470ad74a64195c82e39"
 							]
 						}
 					},
