@@ -30,18 +30,17 @@ exports.verify_token = (req, res, adminOnly = false, next) => {
                     }
                 }
             }).catch(err => {
-                console.log("ato anaty catch;;;;",err)
+                // console.log("ato anaty catch;;;;",err)
                 json_response(req, res, statusCode, 'GET', err, null, true);
                 return;
             });
         } else {
             statusCode = 500;
-            console.log("ato anaty else;;;;",err)
+            // console.log("ato anaty else;;;;",err)
             throw {type: 'server_error'};
        }
     } catch (err) {
-        console.log("FARANY catch;;;;",err)
-
+        // console.log("FARANY catch;;;;",err)
         json_response(req, res, statusCode, 'GET', err, null, true);
         return;
     }
