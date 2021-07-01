@@ -56,7 +56,6 @@ const Animals = ({ animals, setReload, reload }) => {
             const typeValue = typeChoice.find(
                 (item) => item.label === selectedAnimal.type
             );
-            console.log(typeValue.value);
             setNewAnimal({
                 name: selectedAnimal.name,
                 weight: selectedAnimal.weight,
@@ -101,9 +100,7 @@ const Animals = ({ animals, setReload, reload }) => {
     };
 
     const postNewAnimal = async () => {
-        console.log(newAnimal);
         const res = await post('animals/create', newAnimal);
-        console.log(res);
 
         if (res.status === 201) {
             handleClose();
@@ -117,12 +114,10 @@ const Animals = ({ animals, setReload, reload }) => {
     };
 
     const updateAnimal = async () => {
-        console.log(newAnimal);
         const res = await put(
             `animals/${selectedAnimal._id}/update`,
             newAnimal
         );
-        console.log(res);
 
         if (res.status === 201) {
             handleClose();
@@ -315,7 +310,23 @@ const Animals = ({ animals, setReload, reload }) => {
                                     onChange('age', event, 'number')
                                 }
                             />
-                            <h4>Type: {selectedAnimal.type}</h4>
+                            <TextField
+                                select
+                                label="Type"
+                                margin="dense"
+                                value={newAnimal.type}
+                                onChange={(event) => onChange('type', event)}
+                                helperText="Please select the type of your animal"
+                            >
+                                {typeChoice.map((option) => (
+                                    <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
