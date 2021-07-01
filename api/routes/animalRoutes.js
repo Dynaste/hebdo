@@ -63,6 +63,21 @@ module.exports = (server) => {
 
     /**
      * @openapi
+     * /animals/{animalId}/adopt:
+     *   patch:
+     *     tags: [Animals]
+     *     description: Update a specific animal in Animal collection and set an adopter.
+     *     responses:
+     *       201:
+     *         description: Set an adopter to an animal.
+     *       500:
+     *         description: Server internal error.
+     */
+    server.route('/animals/:animalId/adopt')
+        .patch(animalController.adopt_animal);
+
+    /**
+     * @openapi
      * /animals/{animalId}/delete:
      *   delete:
      *     tags: [Animals]

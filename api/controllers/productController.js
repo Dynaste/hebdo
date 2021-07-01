@@ -45,12 +45,12 @@ exports.get_all_products = (req, res) => {
                         productsArr .push({...productObj});
                     });
                 }
-                json_response(req, res, statusCode, 'GET', {type: 'get_many', objName: 'Product', value: productsArr.length}, productsArr );
+                json_response(req, res, statusCode, {type: 'get_many', objName: 'Product', value: productsArr.length}, productsArr );
                 return;
             }
         })
     } catch(err) {
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -84,7 +84,7 @@ exports.get_one_product = (req, res) => {
                             },
                         }
                     }
-                    json_response(req, res, statusCode, 'GET', {type: 'get_one', objName: 'Product'}, objProduct);
+                    json_response(req, res, statusCode, {type: 'get_one', objName: 'Product'}, objProduct);
                     return;
                     
                 } else {
@@ -94,7 +94,7 @@ exports.get_one_product = (req, res) => {
             });   
         });
     } catch (err) {
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -112,7 +112,7 @@ exports.create_product = (req, res) => {
                         throw {type: 'server_error'};
                     } else if (product) {
                         statusCode = 409;
-                        json_response(req, res, statusCode, 'POST', {type: 'exist', objName: 'Product'}, null);
+                        json_response(req, res, statusCode, {type: 'exist', objName: 'Product'}, null);
                         return;
     
                     } else if (!product) {
@@ -145,7 +145,7 @@ exports.create_product = (req, res) => {
                                 throw { type: 'error_create' }
                             } else {
                                 statusCode = 201;
-                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'Product'}, data);
+                                json_response(req, res, statusCode, {type: 'success_create', objName: 'Product'}, data);
                                 return;
                             }
                         })
@@ -154,7 +154,7 @@ exports.create_product = (req, res) => {
             })
         })
     } catch (err) {
-        json_response(req, res, statusCode, 'POST', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -179,7 +179,7 @@ exports.update_product = async (req, res) => {
                         })
 
                     if (updatedProduct) {
-                        json_response(req, res, statusCode, 'PUT', {type: 'success_update', objName: 'Product', value: updatedProduct._id}, updatedProduct);
+                        json_response(req, res, statusCode, {type: 'success_update', objName: 'Product', value: updatedProduct._id}, updatedProduct);
                         return;
                     }
                 });
@@ -188,7 +188,7 @@ exports.update_product = async (req, res) => {
             throw 'Id is required.';
         }
     } catch (err) {
-        json_response(req, res, statusCode, 'PUT', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }
@@ -205,7 +205,7 @@ exports.delete_product = (req, res) => {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (product) {
-                        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete', objName: 'Product', value: product._id}, product);
+                        json_response(req, res, statusCode, {type: 'success_delete', objName: 'Product', value: product._id}, product);
                         return;
                     } else if (!product) {
                         statusCode = 404;
@@ -218,7 +218,7 @@ exports.delete_product = (req, res) => {
             throw {type: 'id_required'};
         }
     } catch (err) {
-        json_response(req, res, statusCode, 'DELETE', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
         return;
     }
 }

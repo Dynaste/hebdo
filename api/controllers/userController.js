@@ -49,7 +49,6 @@ exports.get_all_users = (req, res) => {
                     req,
                     res,
                     statusCode,
-                    'GET',
                     {type: 'get_many', objName: 'user', value: usersList.length},
                     obj
                 );
@@ -57,7 +56,7 @@ exports.get_all_users = (req, res) => {
         });
     } catch (err) {
         console.log(err);
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
     }
 };
 
@@ -72,8 +71,6 @@ exports.get_one_user = (req, res) => {
                     statusCode = 500;
                     throw {type: 'server_error'};
                 } else if (user) {
-                    console.log('User exist');
-                    console.log({ user });
                     const data = {
                         ...user._doc,
                         _options: {
@@ -105,20 +102,17 @@ exports.get_one_user = (req, res) => {
                         req,
                         res,
                         statusCode,
-                        'GET',
                         {type: 'get_one', objName: 'User'},
                         data
                     );
                 } else {
                     statusCode = 404;
-                    error = new Error('User not found');
-                    throw error;
+                    throw {type: 'not_found', objName: 'User'}
                 }
             });
         });
     } catch (err) {
-        console.log('User not exist');
-        json_response(req, res, statusCode, 'GET', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
     }
 };
 
@@ -133,14 +127,12 @@ exports.update_one_user = (req, res) => {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (user) {
-                        console.log({ user });
                         const updatedUser = {
                             _id: user._id,
                             email: req.body?.email ?? user.email,
                             password: req.body?.password ?? user.password,
                             role: req.body?.role ?? user.role,
                         };
-                        console.log({ updatedUser });
                         await User.replaceOne(
                             { _id: req.params.userId },
                             { ...updatedUser }
@@ -183,7 +175,6 @@ exports.update_one_user = (req, res) => {
                             req,
                             res,
                             statusCode,
-                            'PUT',
                             {type: 'update'},
                             data
                         );
@@ -195,8 +186,7 @@ exports.update_one_user = (req, res) => {
             });
         });
     } catch (err) {
-        console.log('Update failed, user not founds or empty body');
-        json_response(req, res, statusCode, 'PUT', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
     }
 };
 
@@ -212,7 +202,7 @@ exports.delete_one_user = (req, res) => {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (user) {
-                        json_response(req, res, statusCode, 'DELETE', {type: 'success_delete'}, user);
+                        json_response(req, res, statusCode, {type: 'success_delete'}, user);
                     }
                 })
             })
@@ -220,7 +210,7 @@ exports.delete_one_user = (req, res) => {
             throw {type: 'id_required'};
         }
     } catch (err) {
-        json_response(req, res, statusCode, 'DELETE', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
     }
 };
 
@@ -243,23 +233,22 @@ exports.login = (req, res) => {
                             { expiresIn: '24 hours' },
                             async (err, token) => {
                                 if (err) {
-                                    console.log({ err });
                                     statusCode = 500;
                                     throw {type: 'server_error'};
                                 } else if (token) {
-                                    console.log('Successfully logged');
-                                    console.log({token});
                                     const data = {
                                         token,
                                         role: user.role
                                     }
-                                    json_response(req, res, statusCode, 'POST', {type: 'success_login'}, data);
+                                    json_response(req, res, statusCode, {type: 'success_login'}, data);
                                 } else {
+                                    statusCode = 400;
                                     throw {type: 'error_occured'};
                                 }
                             }
                         );
                     } else {
+                        statusCode = 400;
                         throw {type: 'email_pwd_couple_error'};
                     }
                 } else {
@@ -272,7 +261,7 @@ exports.login = (req, res) => {
             throw {type: 'fields_required'};
         }
     } catch (err) {
-        json_response(req, res, statusCode, 'POST', err, null, true);
+        json_response(req, res, statusCode, err, null, true);
     }
 };
 
@@ -282,11 +271,12 @@ exports.signup = async (req, res) => {
     try {
         check_create_element(req, User, () => {
             if (password === '' || password === null) {
+                statusCode = 400;
                 throw {type: 'password_required'}
             } else {
                 User.findOne({ email }, async (err, user) => {
                     if (err) {
-                        console.log({err});
+                        statusCode = 500;
                         throw {type: 'server_error'};
                     } else {
                         const newUser = await new User({
@@ -296,13 +286,10 @@ exports.signup = async (req, res) => {
                         });
 
                         await newUser.save((error, cUser) => {
-                            console.log(req.body);
                             if (error) {
-                                console.log('[Error: 500]');
                                 statusCode = 500;
-                                json_response(req, res, statusCode, 'POST', {type: 'server_error'}, null);
+                                json_response(req, res, statusCode, {type: 'server_error'}, null);
                             } else {
-                                console.log('User has been saved');
                                 const createdUser = { ...cUser._doc };
                                 delete createdUser.password;
 
@@ -324,7 +311,7 @@ exports.signup = async (req, res) => {
                                     },
                                 }
                                 
-                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'User'}, data);
+                                json_response(req, res, statusCode, {type: 'success_create', objName: 'User'}, data);
                             }
                         });
                     }
@@ -333,7 +320,6 @@ exports.signup = async (req, res) => {
         })
     } catch (err) {
         statusCode = 500;
-        console.log({err});
         json_response(req, res, statusCode, 'POST', err, null, true);
     }
 };

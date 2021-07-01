@@ -15,13 +15,13 @@ exports.get_request_path = (req) => {
  * @param {boolean} showRequest Define if the request path has to be displayed
  * @return {void}
  */
-exports.json_response = (req, res, statusCode, method, objMessage = {type, objName: null, value: null}, data, showRequest = false) => {
+exports.json_response = (req, res, statusCode, objMessage = {type, objName: null, value: null}, data, showRequest = false) => {
 
     // console.log({objMessage});
     const {type, objName, value} = objMessage;
     const obj = {
         statusCode,
-        method,
+        method: req.method,
         message: this.get_response_message(type, objName, value),
         data,
         request: this.get_request_path(req)
@@ -67,6 +67,8 @@ exports.get_response_message = (type, objName, value) => {
             return `You must at least update one property`;
         case 'success_update':
             return `${objName} ${value} has been successfully updated`;
+        case 'success_adoption':
+            return `You have successfully adopted the ${objName} named ${value}`;
 
         // DELETE
         case 'success_delete':
