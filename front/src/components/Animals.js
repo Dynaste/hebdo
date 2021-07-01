@@ -6,9 +6,9 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import { getLink } from '../functions/useApi';
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import { MenuItem } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { post } from '../functions/useApi';
 
 const useStyles = makeStyles(() => ({
     articleContainer: {
@@ -33,9 +33,10 @@ const useStyles = makeStyles(() => ({
         justifyContent: 'center',
         flexWrap: 'wrap',
     },
-    contentField: {
-        width: '100%',
-        marginTop: 35,
+    dialogContent: {
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
     },
 }));
 
@@ -44,6 +45,10 @@ const Animals = ({ animals }) => {
     const [open, setOpen] = React.useState(false);
     const [dialogContent, setDialogContent] = React.useState(false);
     const [selectedAnimal, setSelectedAnimal] = React.useState(false);
+
+    const [newAnimal, setNewAnimal] = React.useState({
+        type: 1
+    });
 
     const handleClickOpen = (type) => {
         setDialogContent(type);
@@ -54,9 +59,45 @@ const Animals = ({ animals }) => {
         setOpen(false);
     };
 
-    const openAnimal = async(item) => {
+    const typeChoice = [
+        { value: 1, label: 'Chien' },
+        { value: 2, label: 'Chat' },
+        { value: 3, label: 'Cheval' },
+        { value: 4, label: 'Rat' },
+        { value: 5, label: 'Lapin' },
+        { value: 6, label: 'Furet' },
+    ];
+
+    const openAnimal = async (item) => {
         setSelectedAnimal(item);
-        handleClickOpen('GET')
+        handleClickOpen('GET');
+    };
+
+    const onChange = (inputName, event, type = 'string') => {
+        if (type === 'string') {
+            setNewAnimal({
+                ...newAnimal,
+                [inputName]: event.target.value,
+            });
+        } else if (type === 'number') {
+            setNewAnimal({
+                ...newAnimal,
+                [inputName]: +event.target.value,
+            });
+        }
+    };
+
+    const postNewAnimal = async() => {
+        console.log(newAnimal);
+        const res = await post('/animals/create', newAnimal);
+        console.log(res);
+
+        if(res.statusCode === 201){
+            handleClose();
+        }
+        else{
+            alert(res.data.message)
+        }
     }
 
     return (
@@ -81,8 +122,6 @@ const Animals = ({ animals }) => {
                                 <p>{item.name}</p>
                                 <p>Type: {item.type}</p>
                                 <p>Race: {item.race}</p>
-                                {/* <p>{item.age}</p>
-                                <p>{item.weight}</p> */}
                             </Box>
                         )
                 )}
@@ -97,31 +136,61 @@ const Animals = ({ animals }) => {
                         <DialogTitle id="form-dialog-title">
                             Ajout d'un animal
                         </DialogTitle>
-                        <DialogContent>
+                        <DialogContent className={classes.dialogContent}>
                             <TextField
                                 margin="dense"
-                                id="name"
-                                label="Titre"
-                                fullWidth
+                                label="Nom"
+                                onChange={(event) =>
+                                    onChange('name', event)
+                                }
+                            />
+                            <TextField
+                                select
+                                label="Type"
+                                margin="dense"
+                                value={newAnimal.type}
+                                onChange={(event) =>
+                                    onChange('type', event)
+                                }
+                                helperText="Please select the type of your animal"
+                            >
+                                {typeChoice.map((option) => (
+                                    <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <TextField
+                                margin="dense"
+                                label="Race"
+                                onChange={(event) =>
+                                    onChange('race', event)
+                                }
                             />
                             <TextField
                                 margin="dense"
-                                id="name"
-                                label="Sous-titre"
-                                fullWidth
+                                label="Poids"
+                                onChange={(event) =>
+                                    onChange('weight', event, 'number')
+                                }
                             />
-                            <TextareaAutosize
-                                aria-label="minimum height"
-                                rowsMin={10}
-                                placeholder="Contenu de l'article"
-                                className={classes.contentField}
+
+                            <TextField
+                                margin="dense"
+                                label="Age"
+                                onChange={(event) =>
+                                    onChange('age', event, 'number')
+                                }
                             />
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
                                 Annuler
                             </Button>
-                            <Button onClick={handleClose} color="primary">
+                            <Button onClick={() => postNewAnimal()} color="primary">
                                 Envoyer
                             </Button>
                         </DialogActions>
@@ -132,7 +201,7 @@ const Animals = ({ animals }) => {
                         <DialogTitle id="form-dialog-title">
                             {selectedAnimal.name}
                         </DialogTitle>
-                        <DialogContent style={{textAlign: 'center'}}>
+                        <DialogContent style={{ textAlign: 'center' }}>
                             <h4>Type: {selectedAnimal.type}</h4>
                             <h4>Race: {selectedAnimal.race}</h4>
                             <p>Poids: {selectedAnimal.weight}</p>
@@ -151,5 +220,3 @@ const Animals = ({ animals }) => {
 };
 
 export default Animals;
-
-
