@@ -251,7 +251,11 @@ exports.login = (req, res) => {
                                 } else if (token) {
                                     console.log('Successfully logged');
                                     console.log({token});
-                                    json_response(req, res, statusCode, 'POST', {type: 'success_login'}, token);
+                                    const data = {
+                                        token,
+                                        userId: user._id
+                                    }
+                                    json_response(req, res, statusCode, 'POST', {type: 'success_login'}, data);
                                 } else {
                                     throw {type: 'error_occured'};
                                 }

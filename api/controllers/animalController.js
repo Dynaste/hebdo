@@ -119,6 +119,7 @@ exports.create_animal = (req, res) => {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (animal) {
+                        statusCode = 409;
                         json_response(req, res, statusCode, 'POST', {type: 'exist', objName: 'Animal'}, null);
                         return;
     
@@ -191,11 +192,16 @@ exports.update_animal = async (req, res) => {
         if (animalId) {
             check_update(req, 'animalId', () => {
                 verify_token(req, res, true, async () => {
-                    const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, req.body, {
-                        upsert: false,
-                        new: true,
-                        returnOriginal: false
-                    })
+                    const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
+                        {
+                            type: animalTypes[type],
+                            ...req.body
+                        },
+                        {
+                            upsert: false,
+                            new: true,
+                            returnOriginal: false
+                        })
 
                     if (updatedAnimal) {
                         json_response(req, res, statusCode, 'PUT', {type: 'success_update', objName: 'Animal', value: updatedAnimal._id}, updatedAnimal);
@@ -213,9 +219,8 @@ exports.update_animal = async (req, res) => {
 }
 
 exports.delete_animal = (req, res) => {
-    let statusCode = 201;
+    let statusCode = 204;
     const {animalId} = req.params;
-    console.log('helo')
 
     try {
         if (animalId) {
