@@ -3,8 +3,8 @@ const Animal = require('../models/animal');
 const {port, baseUrl: hostname} = require('../config');
 const jwt = require('jsonwebtoken');
 const JWT_TOKEN = process.env.JWT_TOKEN;
-const verify_token = require('../middlewares/jwtMiddleware');
-const {get_request_path, check_get_one, check_create_element, check_update} = require('../utils/utils');
+const {verify_token} = require('../middlewares/jwtMiddleware');
+const {json_response, check_get_one, check_create_element, check_update} = require('../utils/utils');
 
 exports.get_all_animals = (req, res) => {
     let statusCode = 200;
@@ -16,38 +16,38 @@ exports.get_all_animals = (req, res) => {
                 throw {type: 'server_error'};
             } else if (animals) {
                 const animalsArr = [];
-                if (animals.length === 0) {
-                    json_response(req, res, statusCode, 'GET', `${animals.length} animal(s) found.`, animalsArr);
+                if (animals.length > 0) {
+                    animals.foreach(animal => {
+                        const animalObj = {
+                            ...animal,
+                            link: `http://${hostname}:${port}/${animal._id}`,
+                            /* _options: {
+                                create: {
+                                    method: 'POST',
+                                    link: `http://${hostname}:${port}/animal/${animal._id}/create`
+                                },
+                                update: {
+                                    method: 'PUT',
+                                    link: `http://${hostname}:${port}/animal/${animal._id}/update`
+                                },
+                                delete: {
+                                    method: 'DELETE',
+                                    link: `http://${hostname}:${port}/animal/${animal._id}/delete`
+                                }
+                            } */
+                        }
+
+                        animalsArr.push({...animalObj});
+                    });
                 }
-
-                animals.foreach(animal => {
-                    const animalObj = {
-                        ...animal,
-                        link: `http://${hostname}:${port}/${animal._id}`,
-                        /* _options: {
-                            create: {
-                                method: 'POST',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/create`
-                            },
-                            update: {
-                                method: 'PUT',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/update`
-                            },
-                            delete: {
-                                method: 'DELETE',
-                                link: `http://${hostname}:${port}/animal/${animal._id}/delete`
-                            }
-                        } */
-                    }
-
-                    animalsArr.push({...animalObj});
-                });
-                json_response(req, res, statusCode, 'GET', `${animals.length} animal(s) found.`, animalsArr);
+                json_response(req, res, statusCode, 'GET', {type: 'get_many', objName: 'Animal', value: animalsArr.length}, animalsArr);
+                return;
             }
         })
     } catch(err) {
         console.log(err);
         json_response(req, res, statusCode, 'GET', err, null, true);
+        return;
     }
 }
 
@@ -83,6 +83,7 @@ exports.get_one_animal = (req, res) => {
                     }
                     
                     json_response(req, res, statusCode, 'GET', `Animal found.`, objAnimal);
+                    return;
                     
                 } else {
                     statusCode = 404;
@@ -92,6 +93,7 @@ exports.get_one_animal = (req, res) => {
         });
     } catch (err) {
         json_response(req, res, statusCode, 'GET', err, null, true);
+        return;
     }
 }
 
@@ -100,14 +102,15 @@ exports.create_animal = (req, res) => {
     let statusCode = 201;
 
     try {
-        check_create_element(req, () => {
-            verify_token(req, res, () => {
-                Animal.findOne({race, name, type, age, weight}, async (err, animal) => {
+        check_create_element(req, async () => {
+            verify_token(req, res, async () => {
+                await Animal.findOne({race, name, type, age, weight}, async (err, animal) => {
                     if (err) {
                         statusCode = 500;
                         throw {type: 'server_error'};
                     } else if (animal) {
-                        json_response(req, res, statusCode, 'POST', {type: 'exist'}, null);
+                        json_response(req, res, statusCode, 'POST', {type: 'exist', objName: 'Animal'}, null);
+                        return;
     
                     } else if (!animal) {
                         const newAnimal = await new Animal({
@@ -117,9 +120,10 @@ exports.create_animal = (req, res) => {
                         newAnimal.save((error) => {
                             if(!error) {
                                 statusCode = 500;
-                                json_response(req, res, statusCode, 'POST', {type: 'success_create'}, newAnimal);
+                                json_response(req, res, statusCode, 'POST', {type: 'success_create', objName: 'Animal'}, newAnimal);
+                                return;
                             } else {
-                                console.log('[Error] - Exception')
+                                throw { type: 'error_create' }
                             }
                         })
                     }
@@ -128,6 +132,7 @@ exports.create_animal = (req, res) => {
         })
     } catch (err) {
         json_response(req, res, statusCode, 'POST', err, null, true);
+        return;
     }
 }
 
@@ -147,6 +152,7 @@ exports.update_animal = async (req, res) => {
 
                     if (updatedAnimal) {
                         json_response(req, res, statusCode, 'PUT', `Animal ${updatedAnimal._id} has been successfully updated.`, updatedAnimal);
+                        return;
                     }
                 });
             })
@@ -155,6 +161,7 @@ exports.update_animal = async (req, res) => {
         }
     } catch (err) {
         json_response(req, res, statusCode, 'PUT', err, null, true);
+        return;
     }
 }
 
@@ -171,6 +178,7 @@ exports.delete_animal = (req, res) => {
                         throw {type: 'server_error'};
                     } else if (animal) {
                         json_response(req, res, statusCode, 'DELETE', {type: 'success_delete'}, animal);
+                        return;
                     }
                 })
             })
@@ -179,5 +187,6 @@ exports.delete_animal = (req, res) => {
         }
     } catch (err) {
         json_response(req, res, statusCode, 'DELETE', err, null, true);
+        return;
     }
 }
