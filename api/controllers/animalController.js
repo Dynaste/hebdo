@@ -307,25 +307,23 @@ exports.adopt_animal = (req, res) => {
 
     try {
         if (animalId) {
-            check_update(req, 'animalId', async () => {
-                verify_token(req, res, false, async (payload) => {
-                    const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
-                        {
-                            adopterId: payload.userId,
-                            adoptDate: new Date()
-                        },
-                        {
-                            upsert: false,
-                            new: true,
-                            returnOriginal: false
-                        })
+            verify_token(req, res, false, async (payload) => {
+                const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
+                    {
+                        adopterId: payload.userId,
+                        adoptDate: new Date()
+                    },
+                    {
+                        upsert: false,
+                        new: true,
+                        returnOriginal: false
+                    })
 
-                    if (updatedAnimal) {
-                        json_response(req, res, statusCode, {type: 'success_adoption', objName: animalTypes[updatedAnimal.type], value: updatedAnimal.name}, updatedAnimal);
-                        return;
-                    }
-                });
-            })
+                if (updatedAnimal) {
+                    json_response(req, res, statusCode, {type: 'success_adoption', objName: animalTypes[updatedAnimal.type], value: updatedAnimal.name}, updatedAnimal);
+                    return;
+                }
+            });
         } else {
             throw 'Id is required.';
         }
