@@ -10,7 +10,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import { MenuItem } from '@material-ui/core';
+// import { MenuItem } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import Articles from '../components/Articles';
@@ -125,7 +125,6 @@ const Home = () => {
     const getAdoptions = async() => {
         const res = await get('animals/adopted');
         await setAdoptions(res.data.data);
-        console.log(res);
     }
 
     React.useEffect(() => {
