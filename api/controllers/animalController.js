@@ -40,7 +40,7 @@ exports.get_all_animals = (req, res) => {
                                 },
                                 adopt: {
                                     method: 'PATCH',
-                                    link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/adopt`,
+                                    link: `http://${hostname}:${port}/animals/${animal._doc._id}/adopt`,
                                 },
                             }
                         }
@@ -113,7 +113,7 @@ exports.get_adopted_animals = (req, res) => {
                                 },
                                 adopt: {
                                     method: 'PATCH',
-                                    link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/adopt`,
+                                    link: `http://${hostname}:${port}/animals/${animal._doc._id}/adopt`,
                                 },
                             }
                         }
@@ -189,7 +189,7 @@ exports.get_one_animal = (req, res) => {
                             },
                             adopt: {
                                 method: 'PATCH',
-                                link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/adopt`,
+                                link: `http://${hostname}:${port}/animals/${animal._doc._id}/adopt`,
                             },
                         }
 
