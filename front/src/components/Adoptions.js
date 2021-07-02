@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
 
 const Adoptions = ({adoptions}) => {
     const classes = useStyles();
-    const [timeNow, setTimeNow] = React.useState(Date.now())
+    const timeNow = Date.now();
 
     return (
         <div>
