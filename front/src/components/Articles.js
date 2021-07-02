@@ -38,6 +38,12 @@ const useStyles = makeStyles(() => ({
         width: '100%',
         marginTop: 35,
     },
+    dialogContent: {
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        minWidth: '350px'
+    },
 }));
 
 const Articles = ({ articles, setReload, reload }) => {
@@ -155,7 +161,7 @@ const Articles = ({ articles, setReload, reload }) => {
                 {dialogContent === 'GET' && (
                     <>
                         <DialogTitle>{selectedArticle.title}</DialogTitle>
-                        <DialogContent style={{ textAlign: 'center' }}>
+                        <DialogContent style={{ textAlign: 'center' }} className={classes.dialogContent}>
                             <h4>Sous-titre: {selectedArticle.subtitle}</h4>
                             <p>{selectedArticle.content}</p>
                         </DialogContent>

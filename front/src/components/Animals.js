@@ -38,6 +38,7 @@ const useStyles = makeStyles(() => ({
         display: 'flex',
         justifyContent: 'center',
         flexDirection: 'column',
+        minWidth: '350px'
     },
 }));
 
@@ -261,10 +262,10 @@ const Animals = ({ animals, setReload, reload }) => {
                         <DialogTitle id="form-dialog-title">
                             {selectedAnimal.name}
                         </DialogTitle>
-                        <Button color="primary" onClick={() => adoption()}>
+                        <Button color="primary" onClick={() => adoption()} disabled={selectedAnimal.adoptDate ? true : false}>
                             Adopter {selectedAnimal.name}
                         </Button>
-                        <DialogContent style={{ textAlign: 'center' }}>
+                        <DialogContent style={{ textAlign: 'center' }} className={classes.dialogContent}>
                             <h4>Type: {selectedAnimal.type}</h4>
                             <h4>Race: {selectedAnimal.race}</h4>
                             <p>Poids: {selectedAnimal.weight} kg</p>
