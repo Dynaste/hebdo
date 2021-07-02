@@ -30,10 +30,6 @@ exports.get_all_animals = (req, res) => {
                             type: animalTypes[animal._doc.type],
                             link: `http://${hostname}:${port}/animals/${animal._id}`,
                             _options: {
-                                create: {
-                                    method: 'POST',
-                                    link: `http://${hostname}:${port}/animals/${animal._id}/create`
-                                },
                                 update: {
                                     method: 'PUT',
                                     link: `http://${hostname}:${port}/animals/${animal._id}/update`
@@ -41,7 +37,11 @@ exports.get_all_animals = (req, res) => {
                                 delete: {
                                     method: 'DELETE',
                                     link: `http://${hostname}:${port}/animals/${animal._id}/delete`
-                                }
+                                },
+                                adopt: {
+                                    method: 'PATCH',
+                                    link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/adopt`,
+                                },
                             }
                         }
 
@@ -78,18 +78,43 @@ exports.get_adopted_animals = (req, res) => {
                             type: animalTypes[animal._doc.type],
                             link: `http://${hostname}:${port}/animals/${animal._id}`,
                             _options: {
-                                create: {
-                                    method: 'POST',
-                                    link: `http://${hostname}:${port}/animals/${animal._id}/create`
-                                },
                                 update: {
                                     method: 'PUT',
-                                    link: `http://${hostname}:${port}/animals/${animal._id}/update`
+                                    link: `http://${hostname}:${port}/animals/${animal._id}/update`,
+                                    properties: {
+                                        type: {
+                                            type: 'Enumeration',
+                                            data: [
+                                                "Chien",
+                                                "Chat",
+                                                "Cheval",
+                                                "Rat",
+                                                "Lapin",
+                                                "Furet"
+                                            ]
+                                        },
+                                        race: {
+                                            type: 'String'
+                                        },
+                                        name: {
+                                            type: 'String'
+                                        },
+                                        age: {
+                                            type: 'Number'
+                                        },
+                                        weight: {
+                                            type: 'Number'
+                                        }
+                                    }
                                 },
                                 delete: {
                                     method: 'DELETE',
                                     link: `http://${hostname}:${port}/animals/${animal._id}/delete`
-                                }
+                                },
+                                adopt: {
+                                    method: 'PATCH',
+                                    link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/adopt`,
+                                },
                             }
                         }
 
@@ -129,17 +154,42 @@ exports.get_one_animal = (req, res) => {
                         ...animal._doc,
                         type: animalTypes[animal._doc.type],
                         _options: {
-                            create: {
-                                method: 'POST',
-                                link: `http://${hostname}:${port}/animals/${animal._id}/create`
-                            },
                             update: {
                                 method: 'PUT',
-                                link: `http://${hostname}:${port}/animals/${animal._id}/update`
+                                link: `http://${hostname}:${port}/animals/${animal._id}/update`,
+                                properties: {
+                                    type: {
+                                        type: 'Enumeration',
+                                        data: [
+                                            "Chien",
+                                            "Chat",
+                                            "Cheval",
+                                            "Rat",
+                                            "Lapin",
+                                            "Furet"
+                                        ]
+                                    },
+                                    race: {
+                                        type: 'String'
+                                    },
+                                    name: {
+                                        type: 'String'
+                                    },
+                                    age: {
+                                        type: 'Number'
+                                    },
+                                    weight: {
+                                        type: 'Number'
+                                    }
+                                }
                             },
                             delete: {
                                 method: 'DELETE',
                                 link: `http://${hostname}:${port}/animals/${animal._id}/delete`
+                            },
+                            adopt: {
+                                method: 'PATCH',
+                                link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/adopt`,
                             },
                         }
 
@@ -191,6 +241,43 @@ exports.create_animal = (req, res) => {
                             ...newAnimal._doc,
                             _options: {
                                 link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}`,
+                                update: {
+                                    method: 'PUT',
+                                    link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/update`,
+                                    properties: {
+                                        type: {
+                                            type: 'Enumeration',
+                                            data: [
+                                                "Chien",
+                                                "Chat",
+                                                "Cheval",
+                                                "Rat",
+                                                "Lapin",
+                                                "Furet"
+                                            ]
+                                        },
+                                        race: {
+                                            type: 'String'
+                                        },
+                                        name: {
+                                            type: 'String'
+                                        },
+                                        age: {
+                                            type: 'Number'
+                                        },
+                                        weight: {
+                                            type: 'Number'
+                                        }
+                                    }
+                                },
+                                delete: {
+                                    method: 'PATCH',
+                                    link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/delete`,
+                                },
+                                adopt: {
+                                    method: 'PATCH',
+                                    link: `http://${hostname}:${port}/animals/${newAnimal._doc._id}/adopt`,
+                                },
                                 properties: {
                                     type: {
                                         type: 'Enumeration',
