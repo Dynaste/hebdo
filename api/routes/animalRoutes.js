@@ -6,25 +6,54 @@ module.exports = (server) => {
      * /animals:
      *   get:
      *     tags: [Animals]
-     *     description: Welcome to swagger-jsdoc!
+     *     summary: Get all animals
+     *     description: Get all animals from Animal Collection.
      *     responses:
      *       200:
-     *         description: Returns all animals.
+     *         description: Returns animals array.
+     *         content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          
      *       500:
      *         description: Server internal error.
      */
     server.route('/animals')
         .get(animalController.get_all_animals);
+
+    /**
+     * @openapi
+     * /animals:
+     *   get:
+     *     tags: [Animals]
+     *     summary: Get all adopted animals
+     *     description: Get all adopted animals from Animal Collection.
+     *     responses:
+     *       200:
+     *         description: Returns animals array.
+     *         content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                          
+     *       500:
+     *         description: Server internal error.
+     */
+    server.route('/animals/adopted')
+        .get(animalController.get_adopted_animals);
     
     /**
      * @openapi
      * /animals/create:
      *   post:
      *     tags: [Animals]
+     *     summary: Create a new Animal
      *     description: Create a new Animal
      *     responses:
      *       201:
-     *         description: Successfully created a new Animal.
+     *         description: Return the new animal.
      *       500:
      *         description: Server internal error.
      */
@@ -36,10 +65,11 @@ module.exports = (server) => {
      * /animals/{animalId}:
      *   get:
      *     tags: [Animals]
-     *     description: Get a specific item in Animal collection
+     *     summary: Get one animal
+     *     description: Get a specific item in Animal collection.
      *     responses:
      *       200:
-     *         description: Returns one animal.
+     *         description: Returns the animal.
      *       500:
      *         description: Server internal error.
      */
@@ -51,10 +81,11 @@ module.exports = (server) => {
      * /animals/{animalId}/update:
      *   put:
      *     tags: [Animals]
-     *     description: Update a specific item in Animal collection
+     *     summary: Update one animal
+     *     description: Update a specific item in Animal collection.
      *     responses:
      *       201:
-     *         description: Returns all animals.
+     *         description: Returns the updated animal.
      *       500:
      *         description: Server internal error.
      */
@@ -66,6 +97,7 @@ module.exports = (server) => {
      * /animals/{animalId}/adopt:
      *   patch:
      *     tags: [Animals]
+     *     summary: Adopt an animal
      *     description: Update a specific animal in Animal collection and set an adopter.
      *     responses:
      *       201:
@@ -81,10 +113,11 @@ module.exports = (server) => {
      * /animals/{animalId}/delete:
      *   delete:
      *     tags: [Animals]
-     *     description: Delete a specific item in Animal collection
+     *     summary: Delete an animal
+     *     description: Delete a specific item in Animal collection.
      *     responses:
      *       204:
-     *         description: Returns all animals.
+     *         description: Returns the deleted animal.
      *       500:
      *         description: Server internal error.
      */

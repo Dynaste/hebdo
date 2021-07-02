@@ -59,6 +59,8 @@ exports.get_response_message = (type, objName, value) => {
             return `${objName} found`;
         case 'get_many':
             return `${value} ${objName}s found`;
+        case 'not_adopted':
+            return `No ${objName}s adopted`;
 
         // UPDATE
         case 'update':

@@ -437,6 +437,25 @@
 					"response": []
 				},
 				{
+					"name": "Animal - Get all adopted",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/animals/adopted",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"animals",
+								"adopted"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Animal - Get one",
 					"request": {
 						"method": "GET",
@@ -724,6 +743,12 @@
 									"key": "description",
 									"value": "Brosse en métal pour mieux défaire les noeuds de nos petits amis.",
 									"description": "in years",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "50",
+									"description": "in €",
 									"type": "text"
 								}
 							]
