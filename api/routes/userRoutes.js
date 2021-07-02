@@ -6,10 +6,11 @@ module.exports = (server) => {
      * /users:
      *   get:
      *     tags: [Users]
+     *     summary: Get all users
      *     description: Get all users in the collection
      *     responses:
      *       200:
-     *         description: Successfully get all users.
+     *         description: Return all users.
      *       500:
      *         description: Server internal error.
      */
@@ -21,10 +22,11 @@ module.exports = (server) => {
      * /users/{userId}:
      *   get:
      *     tags: [Users]
+     *     summary: Get one user
      *     description: Get only one specific user. 
      *     responses:
      *       200:
-     *         description: Successfully get the user.
+     *         description: Return the user.
      *       500:
      *         description: Server internal error.
      */
@@ -36,10 +38,11 @@ module.exports = (server) => {
      * /users/{userId}/update:
      *   put:
      *     tags: [Users]
-     *     description: Update a user.
+     *     summary: Update an user
+     *     description: Update an user.
      *     responses:
      *       201:
-     *         description: Successfully updated the user.
+     *         description: Return the updated user.
      *       500:
      *         description: Server internal error.
      */
@@ -51,10 +54,11 @@ module.exports = (server) => {
      * /users/{userId}/delete:
      *   delete:
      *     tags: [Users]
-     *     description: Delete a user.
+     *     summary: Delete an user
+     *     description: Delete an user.
      *     responses:
      *       201:
-     *         description: Successfully deleted a user.
+     *         description: Return the deleted user.
      *       500:
      *         description: Server internal error.
      */
@@ -66,10 +70,11 @@ module.exports = (server) => {
      * /login:
      *   post:
      *     tags: [Users]
+     *     summary: Login user
      *     description: Log-in an user.
      *     responses:
      *       201:
-     *         description: Successfully logged-in.
+     *         description: Return the token` and the user role. 
      *       500:
      *         description: Server internal error.
      */
@@ -81,6 +86,7 @@ module.exports = (server) => {
      * /users/create:
      *   post:
      *     tags: [Users]
+     *     summary: Subscribe an user
      *     description: Subscription for a new user. 
      *     responses:
      *       201:
