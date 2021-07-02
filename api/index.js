@@ -16,15 +16,28 @@ const options = {
         servers: {
             url: 'http://localhost:4000'
         },
-        components: {
-            schemas : {
-                Animal: {
-                    required: [
-                        "name"
-                    ]
-                }
+        tags: [
+            {
+                name: 'Users',
+                description: 'Application users',
+            },
+            {
+                name: 'Donations',
+                description: 'Done by users'
+            },
+            {
+                name: 'Animals',
+                description: 'To adopt'
+            },
+            {
+                name: 'Products',
+                description: 'To buy'
+            },
+            {
+                name: 'Articles',
+                description: 'From Blog'
             }
-        }
+        ],
     },
     apis: ['./routes/*.js'], // files containing annotations as above
 };

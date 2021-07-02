@@ -8,10 +8,11 @@ module.exports = (server) => {
      * /articles:
      *   get:
      *     tags: [Articles]
+     *     summary: Get all articles
      *     description: Get all articles from Article collection.
      *     responses:
      *       200:
-     *         description: Returns all Articles.
+     *         description: Return all Articles.
      *       500:
      *         description: Server internal error.
      */
@@ -22,10 +23,11 @@ module.exports = (server) => {
      * /articles/{articleId}:
      *   get:
      *     tags: [Articles]
+     *     summary: Get one animal
      *     description: Get a specific item in Article collection
      *     responses:
      *       200:
-     *         description: Returns one Article.
+     *         description: Return one Article.
      *       500:
      *         description: Server internal error.
      */
@@ -36,10 +38,11 @@ module.exports = (server) => {
      * /articles/create:
      *   post:
      *     tags: [Articles]
+     *     summary: Create a new article
      *     description: Create a new Article.
      *     responses:
      *       201:
-     *         description: Successfully created a new Article.
+     *         description: Return the new Article.
      *       500:
      *         description: Server internal error.
      */
@@ -55,10 +58,11 @@ module.exports = (server) => {
      * /articles/{articleId}/update:
      *   put:
      *     tags: [Articles]
+     *     summary: Update an article
      *     description: Update a specific item in Article collection
      *     responses:
      *       201:
-     *         description: Returns all articles.
+     *         description: Return the updated Article.
      *       500:
      *         description: Server internal error.
      */
@@ -74,10 +78,11 @@ module.exports = (server) => {
      * /articles/{articleId}/delete:
      *   delete:
      *     tags: [Articles]
+     *     summary: Delete an article
      *     description: Delete a specific item in Article collection
      *     responses:
      *       204:
-     *         description: Returns all animals.
+     *         description: Return the deleted article.
      *       500:
      *         description: Server internal error.
      */

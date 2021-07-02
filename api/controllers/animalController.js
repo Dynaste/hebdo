@@ -59,6 +59,56 @@ exports.get_all_animals = (req, res) => {
     }
 }
 
+exports.get_adopted_animals = (req, res) => {
+    let statusCode = 200;
+
+    try {
+        Animal.find({adopter: {$exits: true, $nin: null}}, (err, animals) => {
+            if (err) {
+                statusCode = 500;
+                throw {type: 'server_error'};
+            } else if (animals) {
+                console.log(animals)
+                let animalsArr = [];
+                if (animals.length > 0) {
+                    
+                    animals.forEach(animal => {
+                        const animalObj = {
+                            ...animal._doc,
+                            type: animalTypes[animal._doc.type],
+                            link: `http://${hostname}:${port}/animals/${animal._id}`,
+                            _options: {
+                                create: {
+                                    method: 'POST',
+                                    link: `http://${hostname}:${port}/animals/${animal._id}/create`
+                                },
+                                update: {
+                                    method: 'PUT',
+                                    link: `http://${hostname}:${port}/animals/${animal._id}/update`
+                                },
+                                delete: {
+                                    method: 'DELETE',
+                                    link: `http://${hostname}:${port}/animals/${animal._id}/delete`
+                                }
+                            }
+                        }
+
+                        animalsArr .push({...animalObj});
+                    });
+                } else {
+                    throw {type: 'not_adopted', objName: 'Animal'};
+                }
+                json_response(req, res, statusCode, {type: 'get_many', objName: 'Animal', value: animalsArr.length}, animalsArr );
+                return;
+            }
+        })
+    } catch(err) {
+        console.log(err);
+        json_response(req, res, statusCode, err, null, true);
+        return;
+    }
+}
+
 exports.get_one_animal = (req, res) => {
     const {animalId} = req.params;
     let statusCode = 200;
@@ -251,7 +301,7 @@ exports.delete_animal = (req, res) => {
     }
 }
 
-exports.adopt_animal = () => {
+exports.adopt_animal = (req, res) => {
     let statusCode = 201;
     const {animalId} = req.params;
 
@@ -284,3 +334,4 @@ exports.adopt_animal = () => {
         return;
     }
 }
+
