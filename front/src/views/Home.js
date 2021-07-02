@@ -16,6 +16,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Articles from '../components/Articles';
 import Animals from '../components/Animals';
 import Products from '../components/Products';
+import Adoptions from '../components/Adoptions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -94,6 +95,7 @@ const Home = () => {
     const [articles, setArticles] = React.useState(false);
     const [animals, setAnimals] = React.useState(null);
     const [products, setProducts] = React.useState(null);
+    const [adoptions, setAdoptions] = React.useState(null);
     const [value, setValue] = React.useState(0);
     const [reload, setReload] = React.useState(false);
     const [cart, setCart] = React.useState([]);
@@ -119,10 +121,17 @@ const Home = () => {
         await setProducts(res.data.data);
     };
 
+    const getAdoptions = async() => {
+        const res = await get('animals/adopted');
+        await setAdoptions(res.data.data);
+        console.log(res);
+    }
+
     React.useEffect(() => {
         isTokenValid() && getArticles();
         isTokenValid() && getAnimals();
         isTokenValid() && getProducts();
+        isTokenValid() && getAdoptions();
     }, [reload]);
 
     const handleChange = (event, newValue) => {
@@ -175,9 +184,10 @@ const Home = () => {
                             variant="fullWidth"
                         >
                             <Tab label="Articles" />
-                            <Tab label="Animals" />
-                            <Tab label="Products" />
+                            <Tab label="Animaux" />
+                            <Tab label="Produits" />
                             <Tab label="Donations" />
+                            <Tab label="Adoptions du mois" />
                         </Tabs>
                     </AppBar>
                     <TabPanel
@@ -226,6 +236,13 @@ const Home = () => {
                         index={3}
                         className={classes.tabPanelContent}
                     ></TabPanel>
+                    <TabPanel
+                        value={value}
+                        index={4}
+                        className={classes.tabPanelContent}
+                    >
+                        { adoptions && <Adoptions adoptions={adoptions}/>}
+                    </TabPanel>
                 </div>
             ) : (
                 <Redirect to={{ pathname: '/login' }} />
