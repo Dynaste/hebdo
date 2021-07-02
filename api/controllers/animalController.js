@@ -63,11 +63,11 @@ exports.get_adopted_animals = (req, res) => {
     let statusCode = 200;
 
     try {
-        Animal.find({adopter: {$exits: true, $nin: null}}, (err, animals) => {
+        Animal.find({adopterId: {$nin: [null]}}, async (err, animals) => {
             if (err) {
                 statusCode = 500;
                 throw {type: 'server_error'};
-            } else if (animals) {
+            } else if (animals.length > 0) {
                 console.log(animals)
                 let animalsArr = [];
                 if (animals.length > 0) {
@@ -95,15 +95,16 @@ exports.get_adopted_animals = (req, res) => {
 
                         animalsArr .push({...animalObj});
                     });
-                } else {
+                    
+                    json_response(req, res, statusCode, {type: 'get_many', objName: 'Animal', value: animalsArr.length}, animalsArr );
+                    return;
+                } else if (animals.length === 0) {
+                    console.log(animals)
                     throw {type: 'not_adopted', objName: 'Animal'};
                 }
-                json_response(req, res, statusCode, {type: 'get_many', objName: 'Animal', value: animalsArr.length}, animalsArr );
-                return;
             }
         })
     } catch(err) {
-        console.log(err);
         json_response(req, res, statusCode, err, null, true);
         return;
     }
