@@ -17,6 +17,7 @@ import Articles from '../components/Articles';
 import Animals from '../components/Animals';
 import Products from '../components/Products';
 import Adoptions from '../components/Adoptions';
+import Donations from '../components/Donations'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -235,7 +236,9 @@ const Home = () => {
                         value={value}
                         index={3}
                         className={classes.tabPanelContent}
-                    ></TabPanel>
+                    >
+                        <Donations />
+                    </TabPanel>
                     <TabPanel
                         value={value}
                         index={4}
@@ -259,7 +262,7 @@ const Home = () => {
                         {cart &&
                             cart.map((item, key) => (
                                 <>
-                                    <p key={key}>Produit: {item.name}</p>
+                                    <p key={key}>{item.name}, prix: {item.price}€</p>
                                 </>
                             ))}
                         {/* <h4>Categorie: {selectedProduct.category}</h4>
