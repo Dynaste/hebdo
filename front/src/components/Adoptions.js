@@ -25,7 +25,7 @@ const Adoptions = ({adoptions}) => {
         <div>
             {adoptions &&
                 adoptions.map((item, key) => (
-                    timeNow - (moment(item.adoptDate).unix()*1000) <= 2592000 &&
+                    timeNow - (moment(item.adoptDate).unix()*1000) <= 2592000000 &&
                     <Box
                         boxShadow={1}
                         className={classes.articleContainer}
