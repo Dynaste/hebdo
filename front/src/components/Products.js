@@ -40,27 +40,27 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const Products = ({ products, setReload, reload }) => {
+const Products = ({ products, setReload, reload, setCart, cart }) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [dialogContent, setDialogContent] = React.useState(false);
     const [selectedProduct, setSelectedProduct] = React.useState(false);
 
     const [newProduct, setNewProduct] = React.useState({
-        type: 1,
+        category: 0,
     });
-
-    React.useEffect(() => {
-        console.log(products)
-    }, [])
 
     const handleClickOpen = (type) => {
         setDialogContent(type);
         if (type === 'PUT') {
+            const categoryValue = categoryChoice.find(
+                (item) => item.label === selectedProduct.category
+            );
             setNewProduct({
                 name: selectedProduct.name,
-                category: selectedProduct.category,
+                category: categoryValue.value,
                 description: selectedProduct.description,
+                price: selectedProduct.price,
             });
         }
         setOpen(true);
@@ -74,6 +74,12 @@ const Products = ({ products, setReload, reload }) => {
         setSelectedProduct(item);
         handleClickOpen('GET');
     };
+
+    const categoryChoice = [
+        { value: 0, label: 'Jouet' },
+        { value: 1, label: 'Entretien' },
+        { value: 2, label: 'Nourriture' },
+    ];
 
     const onChange = (inputName, event, type = 'string') => {
         if (type === 'string') {
@@ -90,12 +96,13 @@ const Products = ({ products, setReload, reload }) => {
     };
 
     const postNewProduct = async () => {
+        console.log({ newProduct });
         const res = await post('products/create', newProduct);
 
         if (res.status === 201) {
             handleClose();
             setNewProduct({
-                type: 1,
+                category: 0,
             });
             setReload(!reload);
         } else {
@@ -103,20 +110,20 @@ const Products = ({ products, setReload, reload }) => {
         }
     };
 
-    // const updateProduct = async () => {
-    //     const res = await put(
-    //         `products/${selectedProduct._id}/update`,
-    //         newProduct
-    //     );
+    const updateProduct = async () => {
+        const res = await put(
+            `products/${selectedProduct._id}/update`,
+            newProduct
+        );
 
-    //     if (res.status === 201) {
-    //         handleClose();
-    //         setNewProduct();
-    //         setReload(!reload);
-    //     } else {
-    //         alert(res.data.message);
-    //     }
-    // };
+        if (res.status === 201) {
+            handleClose();
+            setNewProduct({ category: 0 });
+            setReload(!reload);
+        } else {
+            alert(res.data.message);
+        }
+    };
 
     const deleteProduct = async () => {
         const res = await del(`products/${selectedProduct._id}/delete`);
@@ -143,19 +150,18 @@ const Products = ({ products, setReload, reload }) => {
             )}
 
             <div className={classes.listContainer}>
-                {products.map(
-                    (item, key) =>
-                            <Box
-                                boxShadow={1}
-                                className={classes.articleContainer}
-                                key={key}
-                                onClick={() => openProduct(item)}
-                            >
-                                <p>{item.name}</p>
-                                <p>Category: {item.category}</p>
-                                <p>Description: {item.description}</p>
-                            </Box>
-                )}
+                {products.map((item, key) => (
+                    <Box
+                        boxShadow={1}
+                        className={classes.articleContainer}
+                        key={key}
+                        onClick={() => openProduct(item)}
+                    >
+                        <h4>{item.name}</h4>
+                        <p>Categorie: {item.category}</p>
+                        <p>Prix: {item.price} €</p>
+                    </Box>
+                ))}
             </div>
             <Dialog
                 open={open}
@@ -174,15 +180,37 @@ const Products = ({ products, setReload, reload }) => {
                                 onChange={(event) => onChange('name', event)}
                             />
                             <TextField
-                                margin="dense"
+                                select
                                 label="Categorie"
-                                onChange={(event) => onChange('category', event)}
-                            />
+                                margin="dense"
+                                value={newProduct.category}
+                                onChange={(event) =>
+                                    onChange('category', event)
+                                }
+                            >
+                                {categoryChoice.map((option) => (
+                                    <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                             <TextField
                                 margin="dense"
                                 label="Description"
                                 multiline
-                                onChange={(event) => onChange('description', event)}
+                                onChange={(event) =>
+                                    onChange('description', event)
+                                }
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Prix"
+                                onChange={(event) =>
+                                    onChange('price', event, 'number')
+                                }
                             />
                         </DialogContent>
                         <DialogActions>
@@ -206,10 +234,20 @@ const Products = ({ products, setReload, reload }) => {
                         <DialogContent style={{ textAlign: 'center' }}>
                             <h4>Categorie: {selectedProduct.category}</h4>
                             <p>Description: {selectedProduct.description}</p>
+                            <p>Prix: {selectedProduct.price} €</p>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
                                 Fermer
+                            </Button>
+                            <Button
+                                onClick={() =>
+                                    setCart([...cart, selectedProduct])
+                                }
+                                variant="contained"
+                                color="primary"
+                            >
+                                Ajouter au panier
                             </Button>
                             {isAdmin() && (
                                 <>
@@ -229,6 +267,67 @@ const Products = ({ products, setReload, reload }) => {
                                     </Button>
                                 </>
                             )}
+                        </DialogActions>
+                    </>
+                )}
+                {dialogContent === 'PUT' && (
+                    <>
+                        <DialogTitle id="form-dialog-title">
+                            {selectedProduct.name}
+                        </DialogTitle>
+                        <DialogContent className={classes.dialogContent}>
+                            <TextField
+                                margin="dense"
+                                label="Nom"
+                                value={newProduct.name}
+                                onChange={(event) => onChange('name', event)}
+                            />
+                            <TextField
+                                select
+                                label="Categorie"
+                                margin="dense"
+                                value={newProduct.category}
+                                onChange={(event) =>
+                                    onChange('category', event)
+                                }
+                            >
+                                {categoryChoice.map((option) => (
+                                    <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <TextField
+                                margin="dense"
+                                label="Description"
+                                multiline
+                                value={newProduct.description}
+                                onChange={(event) =>
+                                    onChange('description', event)
+                                }
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Prix"
+                                value={newProduct.price}
+                                onChange={(event) =>
+                                    onChange('price', event, 'number')
+                                }
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose} color="primary">
+                                Annuler
+                            </Button>
+                            <Button
+                                onClick={() => updateProduct()}
+                                color="primary"
+                            >
+                                Modifier
+                            </Button>
                         </DialogActions>
                     </>
                 )}

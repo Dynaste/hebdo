@@ -40,21 +40,21 @@
   integrity sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==
 
 "@sindresorhus/is@^0.14.0":
-  "integrity" "sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ=="
-  "resolved" "https://registry.npmjs.org/@sindresorhus/is/-/is-0.14.0.tgz"
-  "version" "0.14.0"
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@sindresorhus/is/-/is-0.14.0.tgz"
+  integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@szmarczak/http-timer@^1.1.2":
-  "integrity" "sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA=="
-  "resolved" "https://registry.npmjs.org/@szmarczak/http-timer/-/http-timer-1.1.2.tgz"
-  "version" "1.1.2"
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/@szmarczak/http-timer/-/http-timer-1.1.2.tgz"
+  integrity sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==
   dependencies:
-    "defer-to-connect" "^1.0.1"
+    defer-to-connect "^1.0.1"
 
 "@types/bson@*":
-  "integrity" "sha512-mVRvYnTOZJz3ccpxhr3wgxVmSeiYinW+zlzQz3SXWaJmD1DuL05Jeq7nKw3SnbKmbleW5qrLG5vdyWe/A9sXhw=="
-  "resolved" "https://registry.npmjs.org/@types/bson/-/bson-4.0.3.tgz"
-  "version" "4.0.3"
+  version "4.0.3"
+  resolved "https://registry.npmjs.org/@types/bson/-/bson-4.0.3.tgz"
+  integrity sha512-mVRvYnTOZJz3ccpxhr3wgxVmSeiYinW+zlzQz3SXWaJmD1DuL05Jeq7nKw3SnbKmbleW5qrLG5vdyWe/A9sXhw==
   dependencies:
     "@types/node" "*"
 
@@ -64,9 +64,9 @@
   integrity sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==
 
 "@types/mongodb@^3.5.27":
-  "integrity" "sha512-JSVFt9p0rTfZ4EgzXmVHUB3ue00xe3CRbQho8nXfImzEDDM4O7I3po1bwbWl/EIbLENxUreZxqLOc8lvcnLVPA=="
-  "resolved" "https://registry.npmjs.org/@types/mongodb/-/mongodb-3.6.18.tgz"
-  "version" "3.6.18"
+  version "3.6.18"
+  resolved "https://registry.npmjs.org/@types/mongodb/-/mongodb-3.6.18.tgz"
+  integrity sha512-JSVFt9p0rTfZ4EgzXmVHUB3ue00xe3CRbQho8nXfImzEDDM4O7I3po1bwbWl/EIbLENxUreZxqLOc8lvcnLVPA==
   dependencies:
     "@types/bson" "*"
     "@types/node" "*"
@@ -1002,25 +1002,25 @@ mongodb@3.6.8:
     optional-require "^1.0.3"
     safe-buffer "^5.1.2"
   optionalDependencies:
-    "saslprep" "^1.0.0"
+    saslprep "^1.0.0"
 
-"mongoose-legacy-pluralize@1.0.2":
-  "integrity" "sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ=="
-  "resolved" "https://registry.npmjs.org/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz"
-  "version" "1.0.2"
+mongoose-legacy-pluralize@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz"
+  integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
-"mongoose-unique-validator@^2.0.3":
-  "integrity" "sha512-3/8pmvAC1acBZS6eWKAWQUiZBlARE1wyWtjga4iQ2wDJeOfRlIKmAvTNHSZXKaAf7RCRUd7wh7as6yWAOrjpQg=="
-  "resolved" "https://registry.npmjs.org/mongoose-unique-validator/-/mongoose-unique-validator-2.0.3.tgz"
-  "version" "2.0.3"
+mongoose-unique-validator@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.npmjs.org/mongoose-unique-validator/-/mongoose-unique-validator-2.0.3.tgz"
+  integrity sha512-3/8pmvAC1acBZS6eWKAWQUiZBlARE1wyWtjga4iQ2wDJeOfRlIKmAvTNHSZXKaAf7RCRUd7wh7as6yWAOrjpQg==
   dependencies:
-    "lodash.foreach" "^4.1.0"
-    "lodash.get" "^4.0.2"
+    lodash.foreach "^4.1.0"
+    lodash.get "^4.0.2"
 
-"mongoose@*", "mongoose@^5.13.0", "mongoose@^5.2.1":
-  "integrity" "sha512-8dvu7vxmDzlupj4I9T0g33GPf4HzSZmIOKQfG9RJQ5Nxk/Ztx1b8zlYp+blvaCfWwtBpiAJuKYOBU17Wq1RVFQ=="
-  "resolved" "https://registry.npmjs.org/mongoose/-/mongoose-5.13.0.tgz"
-  "version" "5.13.0"
+mongoose@^5.13.0:
+  version "5.13.0"
+  resolved "https://registry.npmjs.org/mongoose/-/mongoose-5.13.0.tgz"
+  integrity sha512-8dvu7vxmDzlupj4I9T0g33GPf4HzSZmIOKQfG9RJQ5Nxk/Ztx1b8zlYp+blvaCfWwtBpiAJuKYOBU17Wq1RVFQ==
   dependencies:
     "@types/mongodb" "^3.5.27"
     bson "^1.1.4"

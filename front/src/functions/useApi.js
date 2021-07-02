@@ -75,6 +75,15 @@ export const put = async (path, body) => {
     return res;
 };
 
+export const patch = async (path, body) => {
+    const res = await axios.patch(
+        `${process.env.REACT_APP_END_POINT}${path}`,
+        body,
+        headers
+    );
+    return res;
+};
+
 export const del = async (path) => {
     const res = await axios.delete(
         `${process.env.REACT_APP_END_POINT}${path}`,

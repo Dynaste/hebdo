@@ -8,7 +8,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import { MenuItem } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { isAdmin, post, put, del } from '../functions/useApi';
+import { isAdmin, post, put, del, patch } from '../functions/useApi';
+import moment from 'moment';
 
 const useStyles = makeStyles(() => ({
     articleContainer: {
@@ -113,6 +114,20 @@ const Animals = ({ animals, setReload, reload }) => {
         }
     };
 
+    const adoption = async () => {
+        const res = await patch(`animals/${selectedAnimal._id}/adopt`, {});
+        if (res.status === 201) {
+            alert(`Vous avez adopté ${selectedAnimal.name}`);
+            handleClose();
+            setNewAnimal({
+                type: 1,
+            });
+            setReload(!reload);
+        } else {
+            alert(res.data.message);
+        }
+    };
+
     const updateAnimal = async () => {
         const res = await put(
             `animals/${selectedAnimal._id}/update`,
@@ -169,6 +184,7 @@ const Animals = ({ animals, setReload, reload }) => {
                                 <p>{item.name}</p>
                                 <p>Type: {item.type}</p>
                                 <p>Race: {item.race}</p>
+                                {item.adoptDate && <p>Adopté le {moment(item.adoptDate).format("MM/DD/YYYY")}</p>}
                             </Box>
                         )
                 )}
@@ -245,11 +261,17 @@ const Animals = ({ animals, setReload, reload }) => {
                         <DialogTitle id="form-dialog-title">
                             {selectedAnimal.name}
                         </DialogTitle>
+                        <Button color="primary" onClick={() => adoption()}>
+                            Adopter {selectedAnimal.name}
+                        </Button>
                         <DialogContent style={{ textAlign: 'center' }}>
                             <h4>Type: {selectedAnimal.type}</h4>
                             <h4>Race: {selectedAnimal.race}</h4>
                             <p>Poids: {selectedAnimal.weight} kg</p>
-                            <p>Age: {selectedAnimal.age} an{selectedAnimal.age > 1 && 's'}</p>
+                            <p>
+                                Age: {selectedAnimal.age} an
+                                {selectedAnimal.age > 1 && 's'}
+                            </p>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
