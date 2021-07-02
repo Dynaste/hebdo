@@ -7,6 +7,7 @@ module.exports = (server) => {
      * /donations:
      *   get:
      *     tags: [Donations]
+     *     summary: Get all donations
      *     description: Get all donations informations.
      *     responses:
      *       200:
@@ -22,6 +23,7 @@ module.exports = (server) => {
      * /donations/give:
      *   post:
      *     tags: [Donations]
+     *     summary: Send a donation
      *     description: Make a donation for our work
      *     responses:
      *       201:
