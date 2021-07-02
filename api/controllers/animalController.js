@@ -261,7 +261,8 @@ exports.adopt_animal = () => {
                 verify_token(req, res, false, async (payload) => {
                     const updatedAnimal = await Animal.findOneAndUpdate({_id: animalId}, 
                         {
-                            adopterId: payload.userId
+                            adopterId: payload.userId,
+                            adoptDate: new Date()
                         },
                         {
                             upsert: false,

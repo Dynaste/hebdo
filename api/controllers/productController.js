@@ -134,6 +134,9 @@ exports.create_product = (req, res) => {
                                     },
                                     description: {
                                         type: 'String'
+                                    },
+                                    price: {
+                                        type: 'Number'
                                     }
                                 }
                             }
@@ -170,7 +173,6 @@ exports.update_product = async (req, res) => {
                     const updatedProduct = await Product.findOneAndUpdate({_id: productId}, 
                         {
                             ...req.body,
-                            name: capitalize(name)
                         },
                         {
                             upsert: false,
